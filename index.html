@@ -13,260 +13,137 @@
             direction: rtl;
         }
         header {
-            background-image: url('https://cdn.glitch.global/9d6cc108-a698-4ad6-9591-d17c03047774/librarian.jpg?v=1721631637207');
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
-            height: 450px;
-            width: 100%;
             position: relative;
+            height: 350px;
+            background: url('https://cdn.glitch.global/9d6cc108-a698-4ad6-9591-d17c03047774/librarian.jpg?v=1721631637207') no-repeat center center/cover;
         }
         header::before {
-            content: '';
+            /* שכבה כהה שקופה */
+            content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.3);
+            inset: 0;
+            background: rgba(0,0,0,0.42);
+            z-index: 1;
+        }
+        .main-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 2;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            background: rgba(34, 34, 34, 0.45);
+            padding: 24px 48px 22px 48px;
+            border-radius: 18px;
+            font-size: 2.9em;
+            box-shadow: 0 3px 22px 0 rgba(0,0,0,0.27);
+            text-shadow: 0 3px 8px #222;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
         main {
-            margin: 20px;
+            margin: 0 auto;
+            max-width: 900px;
+            padding: 24px 8px 24px 8px;
         }
-        .book-list, .borrowed-books, .add-book, .import-books, .export-books, .edit-summary, .search-books, .clear-data, .comment-section, .add-image, .settings {
-            background-color: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        .section, .book-list, .borrowed-books {
+            background: #fff;
+            border-radius: 9px;
+            box-shadow: 0 2px 14px 0 rgba(44,44,44,0.11);
+            margin-bottom: 28px;
+            padding: 18px 24px;
         }
         h2 {
             color: #45a049;
-            font-size: 2.5em;
+            margin-bottom: 16px;
+            margin-top: 0;
+            font-size: 2em;
+        }
+        .button {
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 10px 24px;
+            font-size: 1.08em;
+            cursor: pointer;
+            margin: 7px 0 0 7px;
+            transition: background 0.15s;
+        }
+        .button:hover {
+            background: #399440;
+        }
+        input, textarea, select {
+            font-size: 1em;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            padding: 9px;
+            margin-bottom: 11px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: inherit;
         }
         .book-item {
             display: flex;
-            flex-direction: column;
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
+            align-items: flex-start;
+            border-bottom: 1px solid #eee;
+            padding: 13px 0 11px 0;
         }
         .book-item:last-child {
             border-bottom: none;
         }
+        .book-img {
+            width: 80px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 7px;
+            margin-left: 15px;
+            box-shadow: 0 2px 8px #eee;
+        }
         .book-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 18px;
-        }
-        .book-actions {
-            display: flex;
-            align-items: center;
-        }
-        .button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            margin-left: 5px;
-            font-size: 16px;
-            border-radius: 5px;
-        }
-        .button:hover {
-            background-color: #45a049;
-        }
-        .add-comment input, .add-comment textarea, .edit-summary textarea, .import-books input, .export-books input, .clear-data input, .borrow-form input, .search-books input, .add-book input, .add-book textarea, .add-image input, .add-image select {
-            display: block;
-            margin-bottom: 10px;
-            padding: 10px;
-            font-size: 16px;
-            width: 100%;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .comment-item {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            margin-left: 20px;
-        }
-        .hidden {
-            display: none;
-        }
-        .borrow-form {
-            display: flex;
-            align-items: center;
-        }
-        .borrow-form input {
-            margin-left: 5px;
             flex: 1;
         }
-        .message {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
+        .book-title {
+            font-weight: bold;
+            font-size: 1.25em;
+            color: #222;
         }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
+        .book-author {
+            color: #777;
+            margin-bottom: 5px;
         }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
+        .book-summary {
+            color: #333;
+            margin: 6px 0 10px 0;
+            font-size: 1.08em;
         }
-        /* מודאל התקציר */
-        .summary-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding-top: 60px;
-        }
-        .summary-modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            border-radius: 10px;
-            width: 50%;
-            max-width: 600px;
+        .success, .error {
+            margin-top: 16px;
+            padding: 10px 18px;
+            border-radius: 7px;
+            font-weight: bold;
             text-align: center;
         }
-        .close-summary {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        @media (max-width: 800px) {
+            main { max-width: 99vw; }
+            header { height: 200px; }
+            .main-title { font-size: 1.5em; padding: 13px 12px 11px 12px;}
+            .book-img { width: 55px; height: 65px; margin-left: 7px;}
+            h2 { font-size: 1.2em; }
         }
-        /* כפתורי הגדלה והקטנה */
-        .text-size-controls {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            z-index: 1000;
-            display: flex;
-            gap: 10px;
-        }
-        .text-size-controls button {
-            padding: 15px;
-            font-size: 16px;
-            background-color: #45a049;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        .text-size-controls button:hover {
-            background-color: #3e8e41;
-        }
-        /* מודאל לתמונה */
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: transparent;
-            padding-top: 60px;
-        }
-        .image-modal-content {
-            margin: auto;
-            display: block;
-            width: 50%;
-            max-width: 300px;
-        }
-        .image-modal-content img {
-            width: 100%;
-            height: auto;
-        }
-        .close-image {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            color: black;
-            font-size: 35px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        /* רספונסיביות */
-        @media (max-width: 768px) {
-            header {
-                height: 200px;
-            }
-            .book-info {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .book-info img {
-                width: auto;
-                max-width: 200px;
-                height: auto;
-                margin: 0 auto;
-                display: block;
-                order: -1;
-            }
-            .book-info span {
-                margin-top: 10px;
-                text-align: center;
-            }
-            .book-actions {
-                margin-top: 10px;
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .borrow-form input {
-                width: calc(100% - 10px);
-                margin-top: 10px;
-                margin-right: 0;
-            }
-            .button {
-                font-size: 18px;
-                padding: 8px;
-            }
-        }
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            .book-list, .borrowed-books, .add-book, .import-books, .export-books, .edit-summary, .search-books, .clear-data {
-                padding: 15px;
-                margin-bottom: 15px;
-            }
-            .borrow-form input {
-                width: 100%;
-            }
-        }
-        /* הסתרת לשוניות בתצוגת מובייל */
-        @media (max-width: 768px) {
-            #addBookSection, #addImageSection, #importBookSection, #exportBookSection, #clearDataSection {
-                display: none !important;
-            }
-            .button[onclick*="toggleSection('addBookSection')"],
-            .button[onclick*="toggleSection('addImageSection')"],
-            .button[onclick*="toggleSection('importBookSection')"],
-            .button[onclick*="toggleSection('exportBookSection')"],
-            .button[onclick*="toggleSection('clearDataSection')"] {
-                display: none !important;
-            }
+        @media (max-width: 600px) {
+            .section, .book-list, .borrowed-books { padding: 7px 3vw; }
+            .main-title { font-size: 1.1em; }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
 </head>
 <body>
-    <header></header>
-<main>
+    <header>
+        <div class="main-title">הספרנית – מערכת ספרייה דיגיטלית</div>
+    </header>
+    <main>
     <h1 style="text-align:center;margin-top:6px;">הספרנית – מערכת ספרייה דיגיטלית</h1>
     <div id="messageBox"></div>
 

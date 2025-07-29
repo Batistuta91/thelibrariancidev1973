@@ -3,185 +3,590 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הספרנית</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            direction: rtl;
-        }
-        header {
-            position: relative;
-            height: 350px;
-            background: url('https://cdn.glitch.global/9d6cc108-a698-4ad6-9591-d17c03047774/librarian.jpg?v=1721631637207') no-repeat center center/cover;
-        }
-        header::before {
-            /* שכבה כהה שקופה */
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.42);
-            z-index: 1;
-        }
-        .main-title {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            z-index: 2;
-            transform: translate(-50%, -50%);
-            color: #fff;
-            background: rgba(34, 34, 34, 0.45);
-            padding: 24px 48px 22px 48px;
-            border-radius: 18px;
-            font-size: 2.9em;
-            box-shadow: 0 3px 22px 0 rgba(0,0,0,0.27);
-            text-shadow: 0 3px 8px #222;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        main {
-            margin: 0 auto;
-            max-width: 900px;
-            padding: 24px 8px 24px 8px;
-        }
-        .section, .book-list, .borrowed-books {
-            background: #fff;
-            border-radius: 9px;
-            box-shadow: 0 2px 14px 0 rgba(44,44,44,0.11);
-            margin-bottom: 28px;
-            padding: 18px 24px;
-        }
-        h2 {
-            color: #45a049;
-            margin-bottom: 16px;
-            margin-top: 0;
-            font-size: 2em;
-        }
-        .button {
-            background: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 7px;
-            padding: 10px 24px;
-            font-size: 1.08em;
-            cursor: pointer;
-            margin: 7px 0 0 7px;
-            transition: background 0.15s;
-        }
-        .button:hover {
-            background: #399440;
-        }
-        input, textarea, select {
-            font-size: 1em;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            padding: 9px;
-            margin-bottom: 11px;
-            width: 100%;
-            box-sizing: border-box;
-            font-family: inherit;
-        }
-        .book-item {
-            display: flex;
-            align-items: flex-start;
-            border-bottom: 1px solid #eee;
-            padding: 13px 0 11px 0;
-        }
-        .book-item:last-child {
-            border-bottom: none;
-        }
-        .book-img {
-            width: 80px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 7px;
-            margin-left: 15px;
-            box-shadow: 0 2px 8px #eee;
-        }
-        .book-info {
-            flex: 1;
-        }
-        .book-title {
-            font-weight: bold;
-            font-size: 1.25em;
-            color: #222;
-        }
-        .book-author {
-            color: #777;
-            margin-bottom: 5px;
-        }
-        .book-summary {
-            color: #333;
-            margin: 6px 0 10px 0;
-            font-size: 1.08em;
-        }
-        .success, .error {
-            margin-top: 16px;
-            padding: 10px 18px;
-            border-radius: 7px;
-            font-weight: bold;
-            text-align: center;
-        }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
-        @media (max-width: 800px) {
-            main { max-width: 99vw; }
-            header { height: 200px; }
-            .main-title { font-size: 1.5em; padding: 13px 12px 11px 12px;}
-            .book-img { width: 55px; height: 65px; margin-left: 7px;}
-            h2 { font-size: 1.2em; }
-        }
-        @media (max-width: 600px) {
-            .section, .book-list, .borrowed-books { padding: 7px 3vw; }
-            .main-title { font-size: 1.1em; }
-        }
-    </style>
+    <title>הספרנית – מערכת ספרייה דיגיטלית</title>
+    <link href="https://fonts.googleapis.com/css?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+body {
+    font-family: 'Heebo', Arial, sans-serif;
+    background: #f7f9fb;
+    margin: 0;
+    padding: 0;
+    direction: rtl;
+}
+header {
+    position: relative;
+    height: 170px;
+    background: url('https://cdn.glitch.global/9d6cc108-a698-4ad6-9591-d17c03047774/librarian.jpg?v=1721631637207') no-repeat center center/cover;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    box-shadow: 0 3px 24px 0 rgba(0,0,0,0.08);
+}
+header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(28,35,51,0.57) 40%, rgba(68,91,130,0.14) 100%);
+    z-index: 1;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+}
+.main-title {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    background: rgba(37, 45, 63, 0.54);
+    padding: 13px 34px 11px 34px;
+    border-radius: 14px;
+    font-size: 2em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    box-shadow: 0 3px 22px 0 rgba(0,0,0,0.12);
+    border-bottom: 3px solid #43a047;
+}
+main {
+    margin: 0 auto;
+    max-width: 920px;
+    padding: 28px 10px 44px 10px;
+}
+.tabs-bar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+.tab-btn {
+    background: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 10px 10px 0 0;
+    padding: 13px 28px;
+    font-size: 1.11em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.12s, color 0.13s;
+    box-shadow: 0 2px 12px #e0e0e03a;
+    margin-bottom: -2px;
+}
+.tab-btn.active, .tab-btn:focus {
+    background: #1976d2;
+    color: #fff;
+}
+.tab-btn:hover {
+    background: #399440;
+}
+.tab-content {
+    display: none;
+    background: #fafafa;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 0 0 10px 10px;
+    padding: 26px 26px 18px 26px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px #e0e0e033;
+    animation: openTab 0.27s;
+}
+.tab-content.open {
+    display: block;
+}
+@keyframes openTab {
+    0% { opacity: 0; transform: translateY(-12px);}
+    100% { opacity: 1; transform: translateY(0);}
+}
+/* עיצוב קבועים */
+input, textarea, select {
+    font-size: 1.06em;
+    border-radius: 7px;
+    border: 1.2px solid #c7d0e2;
+    padding: 10px;
+    margin-bottom: 13px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    background: #f6f9fc;
+    transition: border 0.15s;
+    outline: none;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: #1976d2;
+    background: #f0f7fa;
+}
+.button {
+    background: linear-gradient(90deg, #1976d2 70%, #43a047 100%);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 9px 28px;
+    font-size: 1.09em;
+    cursor: pointer;
+    margin: 0 0 0 7px;
+    transition: background 0.14s, transform 0.12s;
+    font-weight: 600;
+    box-shadow: 0 1px 6px #c1c4ce33;
+}
+.button:hover, .button:focus {
+    background: linear-gradient(90deg, #184d94 55%, #258d3b 100%);
+    transform: translateY(-2px) scale(1.03);
+}
+.success, .error {
+    margin-top: 16px;
+    padding: 12px 18px;
+    border-radius: 7px;
+    font-weight: 700;
+    text-align: center;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.11em;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 6px #c1d9b12e;
+    opacity: 0.97;
+}
+.success { background: #e5f8e4; color: #26732c;}
+.error { background: #fae7e7; color: #a30d0d;}
+.hidden { display: none !important; }
+.main-section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 14px 0 rgba(44,44,44,0.09);
+    padding: 22px 28px 18px 28px;
+    margin-bottom: 18px;
+}
+h2 {
+    color: #43a047;
+    font-size: 1.35em;
+    margin-bottom: 16px;
+    font-weight: 700;
+}
+/* ספרים */
+.book-list {
+    margin-top: 22px;
+}
+.book-item {
+    display: flex;
+    align-items: flex-start;
+    border-bottom: 1px solid #eee;
+    padding: 13px 0 11px 0;
+    background: #fdfdfd;
+    border-radius: 7px;
+    margin-bottom: 10px;
+    transition: box-shadow 0.16s;
+    gap: 0 18px; /* ריווח בין התמונה לתוכן */
+}
+.book-item:hover {
+    box-shadow: 0 2px 18px 0 #dbe4f433;
+}
+.book-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.book-img {
+    width: 120px;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 7px;
+    margin-left: 0;
+    margin-right: 12px;
+    border: 1px solid #e2e5ea;
+    box-shadow: 0 1px 5px #c7d0e2a6;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 12px;
+}
+.book-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+}
+.book-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-width: 0;
+}
+.book-title-author {
+    font-size: 1.1em;
+    color: #1c2333;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 2px;
+}
+.book-title {
+    font-weight: bold;
+    font-size: 1.25em;
+    color: #1976d2;
+    margin-bottom: 1px;
+    line-height: 1.15;
+    word-break: break-word;
+}
+.book-author {
+    color: #777;
+    font-size: 1em;
+    margin-bottom: 3px;
+    line-height: 1.1;
+}
+.book-summary {
+    color: #333;
+    margin: 4px 0 6px 0;
+    font-size: 1.07em;
+    word-break: break-word;
+    line-height: 1.4;
+}
+.book-actions {
+    margin-top: 4px;
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+.add-image-btn {
+    background: linear-gradient(90deg, #1976d2 70%, #43a047 100%);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 7px 18px;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 1px 6px #c1c4ce33;
+}
+.add-image-btn:hover, .add-image-btn:focus {
+    background: linear-gradient(90deg, #184d94 55%, #258d3b 100%);
+    transform: translateY(-2px) scale(1.03);
+}
+.delete-comment-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.8em;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background 0.2s;
+}
+.delete-comment-btn:hover {
+    background: #c82333;
+}
+.button-gray {
+    background: #757575;
+}
+.button-small {
+    padding: 2px 9px;
+    font-size: 0.85em;
+    background: #d32f2f;
+}
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    animation: fadeIn 0.3s;
+}
+.modal-content {
+    position: relative;
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10000;
+}
+.close-modal:hover {
+    color: #bbb;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+/* רספונסיביות */
+@media (max-width: 900px) {
+    main { max-width: 100vw; }
+    .main-section { padding: 10px 2vw 10px 2vw; }
+    .tab-content { padding: 10px 1vw 10px 1vw; }
+    header { height: 110px; }
+    .main-title { font-size: 1.12em; padding: 7px 4vw 7px 4vw;}
+    .book-img { width: 80px; height: 112px; margin-right: 6px;}
+    .book-item { gap: 0 8px; }
+}
+@media (max-width: 600px) {
+    .main-title { font-size: 0.98em; padding: 5px 2vw; }
+    .main-section { padding: 8px 0.5vw 8px 0.5vw;}
+    .tabs-bar { gap: 5px;}
+    .tab-btn { width: 98vw; font-size: 0.98em;}
+    .tab-content { padding: 6px 1vw; }
+    .book-item {
+        flex-direction: column;
+        gap: 3px;
+        align-items: stretch;
+    }
+    .book-img { width: 54px; height: 76px; margin-right: 0; margin-bottom: 5px;}
+    .book-info { margin-right: 0; }
+    .book-actions { flex-direction: column; gap: 4px;}
+}
+.accessibility-menu {
+    position: fixed;
+    left: 22px;
+    bottom: 28px;
+    z-index: 5000;
+    background: #f7f7f7;
+    border-radius: 14px;
+    box-shadow: 0 3px 16px 0 rgba(0,0,0,0.18);
+    padding: 12px 14px 7px 14px;
+    display: none;
+    min-width: 164px;
+    direction: rtl;
+}
+.accessibility-menu.open {
+    display: block;
+    animation: fadeIn .28s;
+}
+.accessibility-menu button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 15px;
+    margin: 0 0 7px 0;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.14s;
+    width: 100%;
+    text-align: right;
+    font-family: inherit;
+}
+.accessibility-menu button:last-child { margin-bottom: 0; }
+
+/* ---- כפתור עיגול נגישות - מתוקן ---- */
+.accessibility-btn {
+    position: fixed;
+    left: 22px;
+    bottom: 22px;
+    width: 56px;
+    height: 56px;
+    background: #1976d2 !important;
+    color: #fff !important;
+    border-radius: 50%;
+    border: 3px solid #ffd600 !important;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.20);
+    font-size: 27px;
+    z-index: 99999 !important;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.13s, color 0.13s, border 0.13s;
+    opacity: 1 !important;
+}
+.accessibility-btn:active { background: #145fa5 !important; }
+
+/* ניגודיות גבוהה - הכפתור בולט */
+body.accessibility-contrast .accessibility-btn {
+    background: #000 !important;
+    color: #fff !important;
+    border: 3px solid #ffd600 !important;
+    box-shadow: 0 0 8px 2px #ffd600b8 !important;
+}
+
+/* מצב כהה - הכפתור בולט */
+body.accessibility-dark .accessibility-btn {
+    background: #fff !important;
+    color: #1976d2 !important;
+    border: 3px solid #1976d2 !important;
+    box-shadow: 0 0 8px 2px #1976d2a2 !important;
+}
+/* ...הקוד שלך כאן... */
+.accessibility-menu { ... }
+.accessibility-menu.open { ... }
+.accessibility-menu button { ... }
+.accessibility-menu button:last-child { ... }
+.accessibility-btn { ... }
+.accessibility-btn:active { ... }
+body.accessibility-contrast .accessibility-btn { ... }
+body.accessibility-dark .accessibility-btn { ... }
+
+/* כאן להוסיף את הקטע הבא: */
+body.accessibility-contrast,
+body.accessibility-contrast main,
+body.accessibility-contrast .main-section,
+body.accessibility-contrast .tab-content,
+body.accessibility-contrast .book-item,
+body.accessibility-contrast header,
+body.accessibility-contrast .book-img,
+body.accessibility-contrast .book-title,
+body.accessibility-contrast .book-author,
+body.accessibility-contrast .book-summary {
+    background: #fff !important;
+    color: #000 !important;
+    border-color: #222 !important;
+}
+
+body.accessibility-contrast .button,
+body.accessibility-contrast .add-image-btn {
+    background: #000 !important;
+    color: #ffd600 !important;
+    border: 2px solid #ffd600 !important;
+}
+body.accessibility-contrast .tab-btn {
+    background: #000 !important;
+    color: #ffd600 !important;
+}
+
+body.accessibility-dark,
+body.accessibility-dark main,
+body.accessibility-dark .main-section,
+body.accessibility-dark .tab-content,
+body.accessibility-dark .book-item,
+body.accessibility-dark header,
+body.accessibility-dark .book-img,
+body.accessibility-dark .book-title,
+body.accessibility-dark .book-author,
+body.accessibility-dark .book-summary {
+    background: #1a222c !important;
+    color: #fff !important;
+    border-color: #333 !important;
+}
+
+body.accessibility-dark .button,
+body.accessibility-dark .add-image-btn {
+    background: #1976d2 !important;
+    color: #fff !important;
+    border: 2px solid #fff !important;
+}
+body.accessibility-dark .tab-btn {
+    background: #24314b !important;
+    color: #fff !important;
+}
+
+</style>
+
 </head>
 <body>
-    <header>
-        <div class="main-title">הספרנית – מערכת ספרייה דיגיטלית</div>
-    </header>
-    <main>
-    <h1 style="text-align:center;margin-top:6px;">הספרנית – מערכת ספרייה דיגיטלית</h1>
-    <div id="messageBox"></div>
-
-    <div class="section">
+<header>
+    <div class="main-title">הספרנית – מערכת ספרייה דיגיטלית</div>
+</header>
+<main>
+    <div class="tabs-bar">
+        <button class="tab-btn" onclick="openTab('addBookTab', this)">הוסף ספר חדש ＋</button>
+        <button class="tab-btn" onclick="openTab('importTab', this)">יבא ספרים מאקסל ⬇️</button>
+        <button class="tab-btn" onclick="openTab('exportTab', this)">ייצא ספרים לאקסל ⬆️</button>
+    </div>
+    <div id="addBookTab" class="tab-content">
         <h2>הוספת ספר חדש</h2>
         <input type="text" id="bookTitle" placeholder="כותרת הספר">
-        <input type="text" id="bookAuthor" placeholder="מחבר">
-        <textarea id="bookSummary" placeholder="תקציר"></textarea>
+        <input type="text" id="bookAuthor" placeholder="שם המחבר">
+        <textarea id="bookSummary" placeholder="תקציר הספר"></textarea>
         <input type="text" id="bookImageUrl" placeholder="קישור לתמונה (לא חובה)">
         <button class="button" onclick="addBook()">הוסף ספר</button>
     </div>
-
-    <div class="section book-list">
-        <h2>רשימת ספרים</h2>
+    <div id="importTab" class="tab-content">
+        <h2>יבא ספרים מאקסל</h2>
+        <input type="file" id="importExcel" accept=".xlsx,.xls">
+        <input type="password" id="importCode" placeholder="קוד" style="margin-top:5px;">
+        <button class="button" onclick="importBooks()">יבא</button>
+    </div>
+    <div id="exportTab" class="tab-content">
+        <h2>ייצא ספרים לאקסל</h2>
+        <input type="password" id="exportCode" placeholder="קוד">
+        <button class="button" onclick="exportBooks()">ייצא</button>
+    </div>
+    <!-- תמיד פתוח – חיפוש ספרים -->
+    <!-- ... כל ההתחלה נשארת ... -->
+    <div class="main-section" id="searchSection">
+        <h2>חיפוש ספרים 🔍</h2>
+        <div style="display:flex;gap:8px;">
+            <input type="text" id="searchInput" placeholder="חפש ספרים ...">
+            <button class="button" id="searchBtn">חפש</button>
+        </div>
+        <div class="book-list" id="searchResults"></div>
+    </div>
+    <!-- תמיד פתוח – רשימת ספרים -->
+    <div class="main-section" id="bookListSection">
+        <h2>רשימת ספרים 📚</h2>
         <div id="booksContainer"></div>
     </div>
-
-    <div class="section">
-        <h2>תגובות לספרים</h2>
-        <select id="commentBookSelect"></select>
-        <input type="text" id="commentUser" placeholder="שם מגיב">
-        <textarea id="commentText" placeholder="כתוב תגובה..."></textarea>
-        <button class="button" onclick="addComment()">הוסף תגובה</button>
-        <div id="commentsContainer"></div>
+    <!-- תמיד פתוח – רשימת מושאלים -->
+    <div class="main-section" id="borrowedBooksSection">
+        <h2>ספרים מושאלים 🔄</h2>
+        <div id="borrowedContainer"></div>
     </div>
-</main>
+    <div id="messageBox"></div>
+<div id="imageModal" class="image-modal">
+    <span class="close-modal" onclick="closeImageModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+</div>
+<!-- כפתור פתיחת תפריט נגישות -->
+<button class="accessibility-btn" title="תפריט נגישות" onclick="toggleAccessibilityMenu()">
+    <span aria-hidden="true">🦾</span>
+</button>
 
+<!-- תפריט הנגישות עצמו -->
+<div class="accessibility-menu" id="accessibilityMenu">
+    <button onclick="setFontSize(+1)">הגדל פונט</button>
+    <button onclick="setFontSize(-1)">הקטן פונט</button>
+    <button onclick="resetFontSize()">גודל רגיל</button>
+    <button onclick="toggleContrast()">ניגודיות גבוהה</button>
+    <button onclick="toggleDarkModeAcc()">מצב לילה/כהה</button>
+</div>
+
+</main>
 <script>
+function openTab(tabId, btn) {
+    // בדוק אם הלשונית כבר פתוחה
+    var el = document.getElementById(tabId);
+    var isOpen = el && el.classList.contains('open');
+
+    // סגור את כל הלשוניות וכפתורים
+    document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('open'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+    // אם היתה פתוחה - סגור והחזר (כלומר לא פותח שוב)
+    if (isOpen) return;
+
+    // אחרת פתח אותה והפעל כפתור
+    if (el) el.classList.add('open');
+    if (btn) btn.classList.add('active');
+}
+
+
 /* --------- CONFIG --------- */
-const BOOKS_API      = "https://api.myjson.online/v1/records/a2a767ca-92e1-49fc-8e8a-23b04b541284";
-const COMMENTS_API   = "https://api.myjson.online/v1/records/2c8644d7-033e-4db3-96e4-97662f005b56";
-const BOOK_IMAGES_API= "https://api.myjson.online/v1/records/1f5626cb-34b4-4b8f-948a-57d2695f3171";
-const API_TOKEN      = "a5a589e6-be1e-483e-8110-edd57cf4745f";
+const BOOKS_API = "https://api.myjson.online/v1/records/a2a767ca-92e1-49fc-8e8a-23b04b541284";
+const BOOK_IMAGES_API = "https://api.myjson.online/v1/records/1f5626cb-34b4-4b8f-948a-57d2695f3171";
+const API_TOKEN = "a5a589e6-be1e-483e-8110-edd57cf4745f";
+
+const CODE = "0548330010"; // קוד אבטחה
 
 /* --------- STATE --------- */
 let books = [];
-let comments = [];
+let borrowed = [];
 let bookImages = {};
+let comments = {}; // id: [ {user, text} ]
 
 /* --------- UTIL --------- */
 function showMessage(msg, isSuccess = true) {
@@ -197,10 +602,79 @@ function clearBookInputs() {
     document.getElementById('bookSummary').value = '';
     document.getElementById('bookImageUrl').value = '';
 }
+/* --------- פונקציות להוספת תמונה ברמת הספר --------- */
+function startAddImage(id) {
+    document.getElementById('addImageBox'+id).innerHTML = `
+        <input type="text" id="imageUrl${id}" placeholder="קישור לתמונה..." style="width:200px;display:inline-block;">
+        <button class="button" style="padding:5px 12px;" onclick="addImageToBook(${id})">הוסף</button>
+        <button class="button" style="padding:5px 12px;background:#999;" onclick="cancelAddImage(${id})">ביטול</button>
+    `;
+}
 
+async function addImageToBook(id) {
+    const imageUrl = document.getElementById('imageUrl'+id).value.trim();
+    if (!imageUrl) return showMessage("נא להוסיף קישור לתמונה", false);
+    
+    // הוסף את התמונה ל-bookImages
+    bookImages[id] = imageUrl;
+    
+    // עדכן גם את הספר עצמו אם הוא קיים
+    const book = books.find(b => b.id == id);
+    if (book) {
+        book.imageUrl = imageUrl;
+    }
+    
+    const borrowedBook = borrowed.find(b => b.id == id);
+    if (borrowedBook) {
+        borrowedBook.imageUrl = imageUrl;
+    }
+    
+    await saveBooks();
+    await fetchBooks();
+    showMessage("תמונה נוספה בהצלחה!");
+}
+
+function cancelAddImage(id) {
+    document.getElementById('addImageBox'+id).innerHTML = `
+        <button class="add-image-btn" onclick="startAddImage(${id})">הוסף תמונה</button>
+    `;
+    // עדכן תצוגה אם אנחנו בחיפוש
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput.value.trim()) {
+        searchBooks();
+    } else {
+        renderBooks();
+    }
+}
+
+
+
+/* --------- פונקציות להצגת תמונה במודל --------- */
+function openImageModal(imageUrl) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modal.style.display = "block";
+    modalImg.src = imageUrl;
+}
+
+function closeImageModal() {
+    document.getElementById('imageModal').style.display = "none";
+}
+
+// סגור מודל בלחיצה על הרקע
+window.onclick = function(event) {
+    const modal = document.getElementById('imageModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
 /* --------- FETCH BOOKS --------- */
+
+
+
 async function fetchBooks() {
     try {
+        // שלב 1: טען את כל הספרים מה־API הראשי
         const res = await fetch(BOOKS_API, {
             headers: {
                 'Content-Type': 'application/json',
@@ -208,51 +682,105 @@ async function fetchBooks() {
             }
         });
         const json = await res.json();
-        let data = json.jsonData ? JSON.parse(json.jsonData) : (json.data || []);
-        books = Array.isArray(data) ? data : (data.books || []);
+        let data;
+        if (json.jsonData) {
+            try { data = JSON.parse(json.jsonData); } catch(e) { data = json.jsonData; }
+        } else {
+            data = json.data || {};
+        }
+        console.log("ספרים מה-API:", data);
+
+        if (Array.isArray(data)) {
+            books = data;
+            borrowed = [];
+            comments = {};
+        } else {
+            books = data.books || [];
+            borrowed = data.borrowed || [];
+            comments = data.comments || {};
+        }
+
+        // שלב 2: טען את התמונות מה־API הנפרד
+        let imagesRes = await fetch(BOOK_IMAGES_API, {
+            headers: {
+                'Content-Type': 'application/json',
+                'x-collection-access-token': API_TOKEN
+            }
+        });
+        let imagesJson = await imagesRes.json();
+        console.log("תשובת API של תמונות:", imagesJson);
+
+        let imagesData;
+        if (imagesJson.jsonData) {
+            try { imagesData = JSON.parse(imagesJson.jsonData); } catch(e) { imagesData = imagesJson.jsonData; }
+        } else {
+            imagesData = imagesJson.data || {};
+        }
+        console.log("imagesData אחרי פענוח:", imagesData);
+
+        // מבנה bookImages – או אובייקט של bookId=>URL, או מערך
+        if (Array.isArray(imagesData)) {
+            bookImages = {}; // איפוס
+            imagesData.forEach(item => {
+                if (item.id && item.url) bookImages[item.id] = item.url;
+            });
+        } else {
+            bookImages = imagesData || {};
+        }
+        console.log("bookImages הסופי:", bookImages);
+
+        // שלב 3: שייך לכל ספר תמונה לפי bookImages
+        books.forEach(book => {
+            const bookIdStr = String(book.id);
+            if (bookImages[bookIdStr]) {
+                book.imageUrl = bookImages[bookIdStr];
+            }
+        });
+        borrowed.forEach(book => {
+            const bookIdStr = String(book.id);
+            if (bookImages[bookIdStr]) {
+                book.imageUrl = bookImages[bookIdStr];
+            }
+        });
+
+        console.log("books כולל imageUrl:", books.map(b => ({id: b.id, title: b.title, imageUrl: b.imageUrl})));
+        console.log("borrowed כולל imageUrl:", borrowed.map(b => ({id: b.id, title: b.title, imageUrl: b.imageUrl})));
+
         renderBooks();
-        renderBookSelect();
+        renderBorrowed();
+        searchBooks();
+
     } catch (e) {
-        showMessage("שגיאה בטעינת ספרים", false);
+        console.error("שגיאה ב-fetchBooks:", e);
         books = [];
+        borrowed = [];
+        comments = {};
+        bookImages = {};
+        renderBooks();
+        renderBorrowed();
     }
 }
+
 async function saveBooks() {
+    const data = {
+        books,
+        borrowed,
+        comments
+    };
+    
     try {
-        const res = await fetch(BOOKS_API, {
+        // שמור את הספרים
+        await fetch(BOOKS_API, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
                 'x-collection-access-token': API_TOKEN
             },
-            body: JSON.stringify({ jsonData: JSON.stringify(books) })
+            body: JSON.stringify({ jsonData: JSON.stringify(data) })
         });
-        if (!res.ok) throw new Error("שגיאה בשמירה");
-    } catch (e) {
-        showMessage("שגיאה בשמירת ספרים", false);
-    }
-}
 
-/* --------- FETCH BOOK IMAGES --------- */
-async function fetchBookImages() {
-    try {
-        const res = await fetch(BOOK_IMAGES_API, {
-            headers: {
-                'Content-Type': 'application/json',
-                'x-collection-access-token': API_TOKEN
-            }
-        });
-        const json = await res.json();
-        let data = json.jsonData ? JSON.parse(json.jsonData) : (json.data || {});
-        bookImages = data;
-        renderBooks();
-    } catch (e) {
-        bookImages = {};
-    }
-}
-async function saveBookImages() {
-    try {
-        const res = await fetch(BOOK_IMAGES_API, {
+        // שמור את התמונות בנפרד
+        await fetch(BOOK_IMAGES_API, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
@@ -260,142 +788,508 @@ async function saveBookImages() {
             },
             body: JSON.stringify({ jsonData: JSON.stringify(bookImages) })
         });
-        if (!res.ok) throw new Error("שגיאה בשמירת תמונות");
+        
     } catch (e) {
-        showMessage("שגיאה בשמירת תמונות", false);
+        console.error("שגיאה בשמירה:", e);
     }
 }
-
-/* --------- FETCH COMMENTS --------- */
-async function fetchComments() {
-    try {
-        const res = await fetch(COMMENTS_API, {
-            headers: {
-                'Content-Type': 'application/json',
-                'x-collection-access-token': API_TOKEN
-            }
-        });
-        const json = await res.json();
-        let data = json.jsonData ? JSON.parse(json.jsonData) : (json.data || []);
-        comments = Array.isArray(data) ? data : (data.comments || []);
-        renderComments();
-    } catch (e) {
-        showMessage("שגיאה בטעינת תגובות", false);
-        comments = [];
-    }
-}
-async function saveComments() {
-    try {
-        const res = await fetch(COMMENTS_API, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json',
-                'x-collection-access-token': API_TOKEN
-            },
-            body: JSON.stringify({ jsonData: JSON.stringify(comments) })
-        });
-        if (!res.ok) throw new Error("שגיאה בשמירת תגובות");
-    } catch (e) {
-        showMessage("שגיאה בשמירת תגובות", false);
-    }
-}
-
 /* --------- ACTIONS --------- */
 async function addBook() {
     const title = document.getElementById('bookTitle').value.trim();
     const author = document.getElementById('bookAuthor').value.trim();
     const summary = document.getElementById('bookSummary').value.trim();
     const imageUrl = document.getElementById('bookImageUrl').value.trim();
-    if (!title) return showMessage("נא למלא כותרת", false);
-    const id = Date.now();
-    books.push({ id, title, author, summary });
-    if (imageUrl) {
-        bookImages[id] = imageUrl;
-        await saveBookImages();
+
+    // בקשת קוד אימות
+    const code = prompt("נא להזין קוד לצורך הוספת ספר:");
+    if (code !== CODE) {
+        showMessage("קוד לא נכון. הספר לא נוסף.", false);
+        return;
     }
+
+    if (!title) return showMessage("נא למלא כותרת", false);
+
+    const id = Date.now();
+    const newBook = { id, title, author, summary };
+
+    // אם יש תמונה, הוסף אותה לספר
+    if (imageUrl) {
+        newBook.imageUrl = imageUrl;
+        bookImages[id] = imageUrl;
+    }
+
+    books.push(newBook);
     await saveBooks();
     await fetchBooks();
     clearBookInputs();
     showMessage("הספר נוסף בהצלחה!");
 }
-async function removeBook(id) {
-    if (!confirm("האם אתה בטוח שברצונך למחוק את הספר?")) return;
-    books = books.filter(b => b.id !== id);
-    delete bookImages[id];
-    comments = comments.filter(c => c.bookId !== id);
-    await saveBookImages();
-    await saveBooks();
-    await saveComments();
-    await fetchBooks();
-    await fetchComments();
-    showMessage("הספר נמחק");
+
+
+/* --------- BORROW --------- */
+function startBorrow(id) {
+    document.getElementById('borrowBox'+id).innerHTML = `
+        <input type="text" id="borrowUser${id}" placeholder="שם שואל" style="width:120px;display:inline-block;">
+        <button class="button" style="padding:5px 16px;" onclick="borrowBook(${id})">השאל</button>
+        <button class="button" style="padding:5px 12px;background:#999;" onclick="renderBooks()">ביטול</button>
+    `;
+}
+async function borrowBook(id) {
+    const name = document.getElementById('borrowUser'+id).value.trim();
+    if (!name) return showMessage("נא למלא שם", false);
+    const idx = books.findIndex(b=>b.id==id);
+    if(idx>-1) {
+        let b = books[idx];
+        borrowed.push({...b, borrower: name, date: new Date().toLocaleDateString()});
+        books.splice(idx,1);
+        await saveBooks();
+        await fetchBooks();
+        showMessage("הספר הושאל");
+    }
+}
+async function returnBook(id) {
+    const idx = borrowed.findIndex(b=>b.id==id);
+    if(idx>-1) {
+        let b = borrowed[idx];
+        books.push({id:b.id, title:b.title, author:b.author, summary:b.summary});
+        borrowed.splice(idx,1);
+        await saveBooks();
+        await fetchBooks();
+        showMessage("הספר חזר");
+    }
 }
 
-/* --------- COMMENTS --------- */
-function renderBookSelect() {
-    const sel = document.getElementById('commentBookSelect');
-    sel.innerHTML = books.map(b =>
-        `<option value="${b.id}">${b.title}</option>`
-    ).join('');
+/* --------- תגובה ברמת ספר --------- */
+async function deleteComment(bookId, commentIndex) {
+    if (!comments[bookId] || !comments[bookId][commentIndex]) return;
+    
+    if (confirm("האם אתה בטוח שברצונך למחוק את התגובה?")) {
+        comments[bookId].splice(commentIndex, 1);
+        
+        // אם לא נשארו תגובות, מחק את המפתח
+        if (comments[bookId].length === 0) {
+            delete comments[bookId];
+        }
+        
+        await saveBooks();
+        await fetchBooks();
+        showMessage("התגובה נמחקה בהצלחה!");
+    }
 }
-async function addComment() {
-    const bookId = +document.getElementById('commentBookSelect').value;
-    const user = document.getElementById('commentUser').value.trim();
-    const text = document.getElementById('commentText').value.trim();
-    if (!bookId || !user || !text) return showMessage("נא למלא את כל השדות", false);
-    comments.push({ id: Date.now(), bookId, user, text });
-    await saveComments();
-    await fetchComments();
-    document.getElementById('commentUser').value = '';
-    document.getElementById('commentText').value = '';
-    showMessage("התגובה נוספה");
+function startComment(id) {
+    document.getElementById('commentBox'+id).innerHTML = `
+        <input type="text" id="commentUser${id}" placeholder="שם מגיב" style="width:120px;display:inline-block;">
+        <input type="text" id="commentText${id}" placeholder="תגובה..." style="width:180px;display:inline-block;">
+        <button class="button" style="padding:5px 12px;" onclick="addBookComment(${id})">הוסף</button>
+        <button class="button" style="padding:5px 12px;background:#999;" onclick="renderBooks()">ביטול</button>
+    `;
 }
-async function removeComment(id) {
-    if (!confirm("מחיקת תגובה?")) return;
-    comments = comments.filter(c => c.id !== id);
-    await saveComments();
-    await fetchComments();
-    showMessage("התגובה נמחקה");
+async function addBookComment(id) {
+    const user = document.getElementById('commentUser'+id).value.trim();
+    const text = document.getElementById('commentText'+id).value.trim();
+    if (!user || !text) return showMessage("נא למלא הכל", false);
+    if(!comments[id]) comments[id]=[];
+    comments[id].push({user,text, date: new Date().toLocaleDateString()});
+    await saveBooks();
+    await fetchBooks();
+    showMessage("תגובה נוספה");
 }
 
 /* --------- RENDER --------- */
 function renderBooks() {
     const container = document.getElementById('booksContainer');
-    if (!books.length) return container.innerHTML = "<p>אין ספרים במאגר</p>";
-    container.innerHTML = books.map(book => `
-        <div class="book-item">
-            ${bookImages[book.id] ? `<img class="book-img" src="${bookImages[book.id]}">` : ''}
-            <div class="book-info">
-                <div class="book-title">${book.title || "ללא כותרת"}</div>
-                <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
-                ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
-                <div class="book-actions">
-                    <button class="button" onclick="removeBook(${book.id})">מחק</button>
+    if (!books.length) { 
+        container.innerHTML = "<p style='color:#899;'>אין ספרים במאגר</p>"; 
+        return; 
+    }
+    
+container.innerHTML = books.map(book => `
+  <div class="book-item">
+      ${book.imageUrl || bookImages[book.id] ? 
+        `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" 
+              alt="עטיפת הספר" 
+              onclick="openImageModal('${book.imageUrl || bookImages[book.id]}')"
+              onerror="this.style.display='none'">` : 
+        `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;cursor:default;">אין תמונה</div>`
+      }
+      <div class="book-info">
+        <div class="book-title-author">
+            <div class="book-title">${book.title || "ללא כותרת"}</div>
+            <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+        </div>
+        ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+        <div class="book-actions">
+            <div id="addImageBox${book.id}" style="margin-bottom:6px;">
+                <button class="add-image-btn" onclick="startAddImage(${book.id})">הוסף תמונה</button>
+            </div>
+            <div id="summaryBox${book.id}" style="margin-bottom:6px;">
+                <button class="button" onclick="startEditSummary(${book.id})">
+                    ${book.summary ? "ערוך תקציר" : "הוסף תקציר"}
+                </button>
+            </div>
+            <div id="borrowBox${book.id}" style="margin-bottom:6px;">
+                <button class="button" style="padding:5px 16px;" onclick="startBorrow(${book.id})">השאל</button>
+            </div>
+            <div id="commentBox${book.id}" style="margin-bottom:6px;">
+                <button class="button" style="padding:5px 16px;" onclick="startComment(${book.id})">הוסף תגובה</button>
+            </div>
+            <div>
+                <button class="button" style="background:#c62828" onclick="removeBook(${book.id})">מחק</button>
+            </div>
+        </div>
+        <div style="margin-top:7px;font-size:0.95em;color:#007">
+            ${comments[book.id] ? comments[book.id].map((c, index) => `
+                <div style="margin-bottom:5px;">
+                    <button class="button button-small" onclick="deleteComment(${book.id}, ${index})" title="מחק תגובה">×</button>
+                    💬 <b>${c.user}</b>: ${c.text} 
+                    <span style="color:#aaa;font-size:0.92em;">(${c.date||''})</span>
                 </div>
+            `).join('') : ''}
+        </div>
+      </div>
+  </div>
+`).join('');
+    }
+
+
+
+async function removeBook(id) {
+    // שלב 1: קבלת קוד מהמשתמש
+    const code = prompt("אנא הזן את קוד האימות כדי למחוק את הספר:");
+    if (code !== CODE) {
+        showMessage("קוד לא נכון. הספר לא נמחק.", false);
+        return;
+    }
+    // שלב 2: אישור מחיקה
+    if (confirm("האם אתה בטוח שברצונך למחוק את הספר?")) {
+        const idx = books.findIndex(b => b.id == id);
+        if (idx > -1) {
+            books.splice(idx, 1);
+            // מחק גם את התגובות של הספר
+            delete comments[id];
+            // מחק גם את התמונה
+            delete bookImages[id];
+            
+            await saveBooks();
+            await fetchBooks();
+            showMessage("הספר נמחק בהצלחה!");
+        }
+    }
+}
+
+
+    
+
+/* --------- עדכון renderBorrowed עם לחיצה על תמונה --------- */
+function renderBorrowed() {
+    const container = document.getElementById('borrowedContainer');
+    if (!borrowed.length) { 
+        container.innerHTML = "<p style='color:#899;'>אין ספרים מושאלים</p>"; 
+        return; 
+    }
+    
+    container.innerHTML = borrowed.map(book => `
+        <div class="book-item" style="background:#f4fff4">
+            <div class="book-info-row">
+                ${book.imageUrl || bookImages[book.id] ? 
+                  `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" 
+                        alt="עטיפת הספר" 
+                        onclick="openImageModal('${book.imageUrl || bookImages[book.id]}')"
+                        onerror="this.style.display='none'">` : 
+                  `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;cursor:default;">אין תמונה</div>`
+                }
+                <div class="book-title-author">
+                    <div class="book-title">${book.title}</div>
+                    <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+                </div>
+            </div>
+            ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+            <div style="margin:3px 0 8px 0;font-size:1.04em;">
+                <span>📅 הושאל ל: <b>${book.borrower}</b> בתאריך ${book.date||''}</span>
+            </div>
+            <button class="button" style="background:#007a31" onclick="returnBook(${book.id})">החזר ספר</button>
+            <div style="margin-top:7px;font-size:0.97em;color:#007;">
+                ${comments[book.id] ? comments[book.id].map((c, index) => `
+                    <div style="margin-bottom:5px;">
+                        <button class="delete-comment-btn" onclick="deleteComment(${book.id}, ${index})" title="מחק תגובה">×</button>
+                        💬 <b>${c.user}</b>: ${c.text} 
+                        <span style="color:#aaa;font-size:0.92em;">(${c.date||''})</span>
+                    </div>
+                `).join('') : ''}
             </div>
         </div>
     `).join('');
 }
-function renderComments() {
-    const bookId = +document.getElementById('commentBookSelect').value;
-    const filtered = comments.filter(c => c.bookId === bookId);
-    const container = document.getElementById('commentsContainer');
-    if (!filtered.length) return container.innerHTML = "<div style='color:#888;'>אין תגובות לספר זה</div>";
-    container.innerHTML = filtered.map(comment => `
-        <div class="comment-item">
-            <b>${comment.user}</b>: ${comment.text}
-            <button class="button" style="font-size:0.9em;padding:2px 12px;float:left;" onclick="removeComment(${comment.id})">מחק</button>
+/* --------- SEARCH --------- */
+function clearSearch() {
+    document.getElementById('searchInput').value = "";
+    searchBooks();
+}
+
+// חיפוש דינמי + כפתור
+function setupSearchListeners() {
+    document.getElementById('searchInput').addEventListener('input', searchBooks);
+    document.getElementById('searchBtn').addEventListener('click', searchBooks);
+    // Enter בלחיצה על אינפוט
+    document.getElementById('searchInput').addEventListener('keydown', function(e){
+        if(e.key==="Enter") searchBooks();
+    });
+}
+
+// ב־searchBooks – שלוט בתצוגה:
+
+function searchBooks() {
+    // קלט החיפוש
+    let val = document.getElementById('searchInput').value.trim().toLowerCase();
+    let results = document.getElementById('searchResults');
+    let listSection = document.getElementById('bookListSection');
+    let borrowedSection = document.getElementById('borrowedBooksSection');
+
+    // אם אין חיפוש – להחזיר תצוגה רגילה
+    if (!val) {
+        results.innerHTML = "";
+        listSection.style.display = "";
+        borrowedSection.style.display = "";
+        renderBooks();
+        renderBorrowed();
+        return;
+    }
+
+    // הסתרת הרשימות בעת חיפוש
+    listSection.style.display = "none";
+    borrowedSection.style.display = "none";
+
+    // חיפוש בטוח – תומך בשדות ריקים, לא תלויית רישיות
+    let foundBooks = books.filter(b =>
+        (typeof b.title === "string" && b.title.toLowerCase().includes(val)) ||
+        (typeof b.author === "string" && b.author.toLowerCase().includes(val)) ||
+        (typeof b.summary === "string" && b.summary.toLowerCase().includes(val))
+    );
+    let foundBorrowed = borrowed.filter(b =>
+        (typeof b.title === "string" && b.title.toLowerCase().includes(val)) ||
+        (typeof b.author === "string" && b.author.toLowerCase().includes(val)) ||
+        (typeof b.summary === "string" && b.summary.toLowerCase().includes(val))
+    );
+
+    // אין תוצאות
+    if (!foundBooks.length && !foundBorrowed.length) {
+        results.innerHTML = "<div style='color:#a00'>לא נמצאו ספרים מתאימים</div>";
+        return;
+    }
+
+    // בניית HTML של התוצאות
+    let html = "";
+
+   if (foundBooks.length) {
+    html += `<div style="font-weight:bold;color:#175;">ספרים זמינים:</div>`;
+    html += foundBooks.map(book => `
+    <div class="book-item">
+        <div class="book-info-row">
+            ${book.imageUrl || bookImages[book.id] ? 
+              `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" 
+                    alt="עטיפת הספר" 
+                    onclick="openImageModal('${book.imageUrl || bookImages[book.id]}')"
+                    onerror="this.style.display='none'">` : 
+              `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;cursor:default;">אין תמונה</div>`
+            }
+            <div class="book-title-author">
+                <div class="book-title">${book.title || "ללא כותרת"}</div>
+                <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+            </div>
         </div>
+        ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+        
+  <div id="addImageBox${book.id}" class="book-actions" style="margin-bottom:3px;">
+    <button class="add-image-btn" onclick="startAddImage(${book.id})">הוסף תמונה</button>
+</div>
+<div id="borrowBox${book.id}" class="book-actions" style="margin-bottom:3px;">
+    <button class="button" style="padding:5px 16px;" onclick="startBorrow(${book.id})">השאל</button>
+</div>
+<div id="commentBox${book.id}" class="book-actions" style="margin-bottom:3px;">
+    <button class="button" style="padding:5px 16px;" onclick="startComment(${book.id})">הוסף תגובה</button>
+</div>
+<div class="book-actions">
+    <button class="button" style="background:#c62828" onclick="removeBook(${book.id})">מחק</button>
+</div>
+
+        <div style="margin-top:7px;font-size:0.95em;color:#007">
+            ${comments[book.id] ? comments[book.id].map((c, index) => `
+                <div style="margin-bottom:5px;">
+                    <button class="delete-comment-btn" onclick="deleteComment(${book.id}, ${index})" title="מחק תגובה">×</button>
+                    💬 <b>${c.user}</b>: ${c.text} 
+                    <span style="color:#aaa;font-size:0.92em;">(${c.date||''})</span>
+                </div>
+            `).join('') : ''}
+        </div>
+    </div>
     `).join('');
 }
+
+
+    if (foundBorrowed.length) {
+        html += `<div style="font-weight:bold;color:#856300;margin-top:16px;">ספרים מושאלים:</div>`;
+        html += foundBorrowed.map(book => `
+        <div class="book-item" style="background:#f4fff4">
+            <div class="book-info-row">
+                ${book.imageUrl || bookImages[book.id] ? 
+                  `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" 
+                        alt="עטיפת הספר" 
+                        onclick="openImageModal('${book.imageUrl || bookImages[book.id]}')"
+                        onerror="this.style.display='none'">` : 
+                  `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;cursor:default;">אין תמונה</div>`
+                }
+                <div class="book-title-author">
+                    <div class="book-title">${book.title}</div>
+                    <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+                </div>
+            </div>
+            ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+            <div style="margin:3px 0 8px 0;font-size:1.04em;">
+                <span>📅 הושאל ל: <b>${book.borrower}</b> בתאריך ${book.date||''}</span>
+            </div>
+            <button class="button" style="background:#007a31" onclick="returnBook(${book.id});clearSearch()">החזר ספר</button>
+            <div style="margin-top:7px;font-size:0.97em;color:#007;">
+                ${comments[book.id] ? comments[book.id].map((c, index) => `
+                    <div style="margin-bottom:5px;">
+                        <button class="delete-comment-btn" onclick="deleteComment(${book.id}, ${index})" title="מחק תגובה">×</button>
+                        💬 <b>${c.user}</b>: ${c.text} 
+                        <span style="color:#aaa;font-size:0.92em;">(${c.date||''})</span>
+                    </div>
+                `).join('') : ''}
+            </div>
+        </div>
+        `).join('');
+    }
+
+    results.innerHTML = html;
+}
+
+
+
+  
+
+
+/* --------- ייצוא אקסל --------- */
+function exportBooks() {
+    let code = document.getElementById('exportCode').value;
+    if (code !== CODE) { showMessage("קוד לא נכון", false); return; }
+    let allBooks = [...books, ...borrowed.map(b=>({...b, borrower:b.borrower||"", borrowedDate:b.date||""}))];
+    let ws = XLSX.utils.json_to_sheet(allBooks);
+    let wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "ספרים");
+    XLSX.writeFile(wb, "books.xlsx");
+}
+/* --------- יבוא אקסל --------- */
+function importBooks() {
+    let code = document.getElementById('importCode').value;
+    if (code !== CODE) { showMessage("קוד לא נכון", false); return; }
+    let file = document.getElementById('importExcel').files[0];
+    if (!file) return showMessage("לא נבחר קובץ", false);
+    let reader = new FileReader();
+    reader.onload = function(e) {
+        let data = new Uint8Array(e.target.result);
+        let workbook = XLSX.read(data, {type:'array'});
+        let sheet = workbook.Sheets[workbook.SheetNames[0]];
+        let arr = XLSX.utils.sheet_to_json(sheet);
+        // רק מבנה בסיסי: id, title, author, summary
+        for(let r of arr) {
+            if(!r.title) continue;
+            let id = Date.now()+Math.floor(Math.random()*10000);
+            books.push({ id, title:r.title, author:r.author||'', summary:r.summary||'' });
+        }
+        saveBooks().then(fetchBooks);
+        showMessage("ספרים יובאו!");
+    };
+    reader.readAsArrayBuffer(file);
+}
+function startEditSummary(id) {
+    // מציג תיבת קלט לעריכת תקציר
+    const book = books.find(b => b.id == id);
+    const summary = (book && book.summary) || '';
+    document.getElementById('summaryBox'+id).innerHTML = `
+        <textarea id="summaryInput${id}" style="width:220px;height:60px;display:inline-block;" placeholder="תקציר">${summary}</textarea>
+        <button class="button" style="padding:5px 12px;" onclick="saveSummary(${id})">שמור</button>
+        <button class="button" style="padding:5px 12px;background:#999;" onclick="cancelEditSummary(${id})">ביטול</button>
+    `;
+}
+async function saveSummary(id) {
+    const summary = document.getElementById('summaryInput'+id).value.trim();
+    const book = books.find(b => b.id == id);
+    if (book) {
+        book.summary = summary;
+        await saveBooks();
+        await fetchBooks();
+        showMessage("התקציר עודכן בהצלחה!");
+    }
+}
+function cancelEditSummary(id) {
+    renderBooks(); // מרנדר מחדש את כל הספרים, מחזיר למצב הקודם
+}
+
+// מערכת נגישות פשוטה - שליטה בפונט וניגודיות/כהה
+const ACCESS_FONT_KEY = 'library_font_size';
+const ACCESS_CONTRAST_KEY = 'library_contrast';
+const ACCESS_DARK_KEY = 'library_dark';
+
+function toggleAccessibilityMenu() {
+    document.getElementById('accessibilityMenu').classList.toggle('open');
+}
+
+function setFontSize(delta) {
+    let fs = +localStorage.getItem(ACCESS_FONT_KEY) || 16;
+    fs += delta;
+    if (fs < 13) fs = 13;
+    if (fs > 28) fs = 28;
+    document.documentElement.style.fontSize = fs + "px";
+    localStorage.setItem(ACCESS_FONT_KEY, fs);
+}
+
+function resetFontSize() {
+    document.documentElement.style.fontSize = "16px";
+    localStorage.setItem(ACCESS_FONT_KEY, 16);
+}
+
+function toggleContrast() {
+    let enabled = document.body.classList.toggle('accessibility-contrast');
+    localStorage.setItem(ACCESS_CONTRAST_KEY, enabled ? "1" : "");
+}
+
+function toggleDarkModeAcc() {
+    let enabled = document.body.classList.toggle('accessibility-dark');
+    localStorage.setItem(ACCESS_DARK_KEY, enabled ? "1" : "");
+}
+
+// טען הגדרות נגישות בשיגור
+(function(){
+    let fs = +localStorage.getItem(ACCESS_FONT_KEY);
+    if (fs && fs >= 13 && fs <= 28)
+        document.documentElement.style.fontSize = fs + "px";
+    if (localStorage.getItem(ACCESS_CONTRAST_KEY))
+        document.body.classList.add('accessibility-contrast');
+    if (localStorage.getItem(ACCESS_DARK_KEY))
+        document.body.classList.add('accessibility-dark');
+})();
+
+// סגור תפריט אם לוחצים בחוץ
+document.addEventListener('mousedown', function(e){
+    const menu = document.getElementById('accessibilityMenu');
+    const btn = document.querySelector('.accessibility-btn');
+    if (!menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.remove('open');
+    }
+});
+
 
 /* --------- INIT --------- */
 window.onload = async function() {
     await fetchBooks();
-    await fetchBookImages();
-    await fetchComments();
-    document.getElementById('commentBookSelect').addEventListener('change', renderComments);
+    setupSearchListeners();
+    // לוודא שתמיד יש מאזין לחיפוש
+    document.getElementById('searchInput').addEventListener('input', searchBooks);
 };
+
+
+
 </script>
 </body>
 </html>

@@ -174,7 +174,7 @@ h2 {
     border-radius: 7px;
     margin-bottom: 10px;
     transition: box-shadow 0.16s;
-    gap: 0 18px; /* ריווח בין התמונה לתוכן */
+    gap: 0 18px;
 }
 .book-item:hover {
     box-shadow: 0 2px 18px 0 #dbe4f433;
@@ -325,31 +325,85 @@ h2 {
     from { opacity: 0; }
     to { opacity: 1; }
 }
-/* רספונסיביות */
+/* --- רספונסיביות מובייל --- */
 @media (max-width: 900px) {
     main { max-width: 100vw; }
-    .main-section { padding: 10px 2vw 10px 2vw; }
-    .tab-content { padding: 10px 1vw 10px 1vw; }
-    header { height: 110px; }
-    .main-title { font-size: 1.12em; padding: 7px 4vw 7px 4vw;}
-    .book-img { width: 80px; height: 112px; margin-right: 6px;}
-    .book-item { gap: 0 8px; }
+    .main-section, .tab-content { padding: 12px 2vw; }
+    header { height: 120px; }
+    .main-title { font-size: 1.14em; padding: 8px 4vw; }
+    .book-img { width: 70px; height: 100px; margin-right: 0; }
+    .book-item { gap: 0 5px; }
 }
 @media (max-width: 600px) {
-    .main-title { font-size: 0.98em; padding: 5px 2vw; }
-    .main-section { padding: 8px 0.5vw 8px 0.5vw;}
-    .tabs-bar { gap: 5px;}
-    .tab-btn { width: 98vw; font-size: 0.98em;}
-    .tab-content { padding: 6px 1vw; }
+    main {
+        max-width: 100vw;
+        padding: 4px 1vw 20px 1vw;
+    }
+    .main-section, .tab-content {
+        padding: 8px 1vw;
+        border-radius: 8px;
+        margin-bottom: 14px;
+    }
+    .tabs-bar {
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+    .tab-btn {
+        width: 100%;
+        font-size: 1em;
+        padding: 10px 0;
+        border-radius: 8px 8px 0 0;
+        margin-bottom: 2px;
+    }
+    .book-list, #searchResults, #booksContainer, #borrowedContainer {
+        padding: 0;
+    }
     .book-item {
         flex-direction: column;
         gap: 3px;
         align-items: stretch;
+        padding: 9px 4px;
     }
-    .book-img { width: 54px; height: 76px; margin-right: 0; margin-bottom: 5px;}
-    .book-info { margin-right: 0; }
-    .book-actions { flex-direction: column; gap: 4px;}
+    .book-img {
+        width: 96px;
+        height: 130px;
+        margin: 0 auto 7px auto;
+        display: block;
+    }
+    .book-info {
+        margin-right: 0;
+    }
+    .book-actions {
+        flex-direction: column;
+        gap: 4px;
+    }
+    .main-title {
+        font-size: 1.1em;
+        padding: 7px 2vw;
+        border-radius: 12px;
+        top: 62%;
+    }
+    header {
+        height: 98px;
+        min-height: 90px;
+        border-radius: 0 0 12px 12px;
+    }
+    .accessibility-menu {
+        left: 12px;
+        bottom: 80px;
+        min-width: 140px;
+        padding: 9px 8px 7px 8px;
+    }
+    .accessibility-btn {
+        left: 12px;
+        bottom: 12px;
+        width: 44px;
+        height: 44px;
+        font-size: 19px;
+    }
 }
+/* --- כפתור נגישות ותפריט --- */
 .accessibility-menu {
     position: fixed;
     left: 22px;
@@ -383,7 +437,6 @@ h2 {
 }
 .accessibility-menu button:last-child { margin-bottom: 0; }
 
-/* ---- כפתור עיגול נגישות - מתוקן ---- */
 .accessibility-btn {
     position: fixed;
     left: 22px;
@@ -413,7 +466,6 @@ body.accessibility-contrast .accessibility-btn {
     border: 3px solid #ffd600 !important;
     box-shadow: 0 0 8px 2px #ffd600b8 !important;
 }
-
 /* מצב כהה - הכפתור בולט */
 body.accessibility-dark .accessibility-btn {
     background: #fff !important;
@@ -421,17 +473,8 @@ body.accessibility-dark .accessibility-btn {
     border: 3px solid #1976d2 !important;
     box-shadow: 0 0 8px 2px #1976d2a2 !important;
 }
-/* ...הקוד שלך כאן... */
-.accessibility-menu { ... }
-.accessibility-menu.open { ... }
-.accessibility-menu button { ... }
-.accessibility-menu button:last-child { ... }
-.accessibility-btn { ... }
-.accessibility-btn:active { ... }
-body.accessibility-contrast .accessibility-btn { ... }
-body.accessibility-dark .accessibility-btn { ... }
 
-/* כאן להוסיף את הקטע הבא: */
+/* --- עיצוב מצב ניגודיות גבוהה לכל האתר --- */
 body.accessibility-contrast,
 body.accessibility-contrast main,
 body.accessibility-contrast .main-section,
@@ -446,7 +489,6 @@ body.accessibility-contrast .book-summary {
     color: #000 !important;
     border-color: #222 !important;
 }
-
 body.accessibility-contrast .button,
 body.accessibility-contrast .add-image-btn {
     background: #000 !important;
@@ -458,6 +500,7 @@ body.accessibility-contrast .tab-btn {
     color: #ffd600 !important;
 }
 
+/* --- עיצוב מצב כהה לכל האתר --- */
 body.accessibility-dark,
 body.accessibility-dark main,
 body.accessibility-dark .main-section,
@@ -472,7 +515,6 @@ body.accessibility-dark .book-summary {
     color: #fff !important;
     border-color: #333 !important;
 }
-
 body.accessibility-dark .button,
 body.accessibility-dark .add-image-btn {
     background: #1976d2 !important;
@@ -483,8 +525,8 @@ body.accessibility-dark .tab-btn {
     background: #24314b !important;
     color: #fff !important;
 }
-
 </style>
+
 
 </head>
 <body>

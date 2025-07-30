@@ -18,13 +18,28 @@ header {
     background-image: url(https://cdn.glitch.global/9d6cc108-a698-4ad6-9591-d17c03047774/librarian.jpg?v=1721631637207);
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: center;
+    background-position: center center;
     height: 450px;
     width: 100%;
     position: relative;
     min-height: 180px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+/* יוצר אזור שמחזיק את התמונה ברקע גם כשהheader ריק */
+header::after {
+    content: "";
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: inherit;
+    pointer-events: none;
+}
+
 header::before {
     content: "";
     position: absolute;
@@ -35,6 +50,52 @@ header::before {
     border-bottom-right-radius: 14px;
     pointer-events: none;
 }
+
+.main-title {
+    position: relative; /* במקום absolute כדי לא להישבר */
+    z-index: 2;
+    color: #fff;
+    background: rgba(37, 45, 63, 0.54);
+    padding: 13px 34px 11px 34px;
+    border-radius: 14px;
+    font-size: 2em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    box-shadow: 0 3px 22px 0 rgba(0,0,0,0.12);
+    border-bottom: 3px solid #43a047;
+    text-align: center;
+    max-width: 94vw;
+    overflow-wrap: break-word;
+}
+
+@media (max-width: 900px) {
+    header {
+        height: 240px;
+        min-height: 120px;
+    }
+    .main-title {
+        font-size: 1.17em;
+        padding: 10px 5vw 10px 5vw;
+    }
+}
+
+@media (max-width: 600px) {
+    header {
+        height: 125px !important;
+        min-height: 90px !important;
+        background-size: cover;
+        background-position: center center;
+        /* מוודא שהתמונה תוצג גם בשוליים צרים */
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+    .main-title {
+        font-size: 0.96em;
+        padding: 7px 3vw;
+        max-width: 97vw;
+    }
+}
+
 .main-title {
     position: absolute;
     top: 55%;

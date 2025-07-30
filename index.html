@@ -15,20 +15,39 @@ body {
     padding: 0;
     direction: rtl;
 }
-header {
-    background-image: url(https://github.com/Batistuta91/thelibrariancidev1973/blob/main/the%20libarian.png?raw=true);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
-    height: 500px;
-    width: 100%;
-    position: relative;
-    min-height: 800PX;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+ header {
+            background-image: url('https://cdn.glitch.global/9d6cc108-a698-4ad6-9591-d17c03047774/librarian.jpg?v=1721631637207');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            height: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+
+.main-title {
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: #fff;
+    background: rgba(37, 45, 63, 0.54);
+    padding: 13px 34px 11px 34px;
+    border-radius: 14px;
+    font-size: 2em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    box-shadow: 0 3px 22px 0 rgba(0,0,0,0.12);
+    border-bottom: 3px solid #43a047;
+    text-align: center;
+    width: max-content;
+    max-width: 94vw;
+    overflow-wrap: break-word;
 }
+
+
 
 /* יוצר אזור שמחזיק את התמונה ברקע גם כשהheader ריק */
 header::after {
@@ -52,30 +71,6 @@ header::before {
     border-bottom-right-radius: 14px;
     pointer-events: none;
 }
-
-
-.main-title {
-    position: absolute;
-    top: 55%;
-    left: 50%;
-    z-index: 2;
-    transform: translate(-50%, -50%);
-    color: #fff;
-    background: rgba(37, 45, 63, 0.54);
-    padding: 13px 34px 11px 34px;
-    border-radius: 14px;
-    font-size: 2em;
-    font-weight: 700;
-    letter-spacing: 2px;
-    box-shadow: 0 3px 22px 0 rgba(0,0,0,0.12);
-    border-bottom: 3px solid #43a047;
-    text-align: center;
-    width: max-content;
-    max-width: 94vw;
-    overflow-wrap: break-word;
-}
-
-
 
 main {
     margin: 0 auto;
@@ -524,6 +519,138 @@ body.accessibility-contrast .tab-btn {
     background: #000 !important;
     color: #ffd600 !important;
 }
+ @media (max-width: 768px) {
+            .book-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .book-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .borrow-form input {
+                width: calc(100% - 10px);
+                margin-top: 10px;
+                margin-right: 0;
+            }
+            .button {
+                font-size: 18px;
+                padding: 8px;
+            }
+            .mobile-view .button {
+                font-size: 16px;
+                padding: 6px;
+            }
+            .mobile-view .book-actions button {
+                width: auto;
+                margin-right: 5px;
+            }
+            .mobile-view .borrow-form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .mobile-view .borrow-form input {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .mobile-view .book-info,
+            .mobile-view .book-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .mobile-view .book-actions {
+                margin-top: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .book-list, .borrowed-books, .add-book, .import-books, .export-books, .edit-summary, .search-books, .clear-data {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            .borrow-form input {
+                width: 100%;
+            }
+        }
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .mobile-view-toggle {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .mobile-view-toggle button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .mobile-view {
+            max-width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .mobile-view .book-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+        .mobile-view .book-info,
+        .mobile-view .book-actions {
+            display: block;
+            width: 100%;
+        }
+        .mobile-view .book-actions button {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .mobile-view input[type="text"],
+        .mobile-view textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+  @media (max-width: 768px) {
+    .book-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* ממרכז את כל התוכן */
+        text-align: center; /* מבטיח שהכותרת תהיה ממורכזת */
+    }
+    
+
+    .book-info img {
+        width: auto;
+        max-width: 200px;
+        height: auto;
+        margin: 0 auto; /* ממרכז את התמונה */
+        display: block; /* מבטיח שהתמונה תוצג כבלוק ממורכז */
+        order: -1; /* מעביר את התמונה למעלה */
+    }
+
+    .book-info span {
+        margin-top: 10px;
+        text-align: center; /* ממרכז את כותרת הספר */
+    }
+
+
 </style>
 
 </head>

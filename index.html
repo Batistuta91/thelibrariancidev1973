@@ -16,14 +16,14 @@ body {
     direction: rtl;
 }
 header {
-    background-image: url(https://cdn.glitch.global/9d6cc108-a698-4ad6-9591-d17c03047774/librarian.jpg?v=1721631637207);
+    background-image: url(https://github.com/Batistuta91/thelibrariancidev1973/blob/main/the%20libarian.png?raw=true);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
-    height: 450px;
+    height: 500px;
     width: 100%;
     position: relative;
-    min-height: 180px;
+    min-height: 800PX;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -45,12 +45,14 @@ header::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(120deg, rgba(28,35,51,0.57) 40%, rgba(68,91,130,0.14) 100%);
+    background: linear-gradient(120deg, rgba(28,35,51,0.13) 40%, rgba(68,91,130,0.04) 100%);
+    /* שים לב: שיניתי את הערכים ל־0.13 ו־0.04 בלבד */
     z-index: 1;
     border-bottom-left-radius: 14px;
     border-bottom-right-radius: 14px;
     pointer-events: none;
 }
+
 
 .main-title {
     position: absolute;
@@ -73,41 +75,7 @@ header::before {
     overflow-wrap: break-word;
 }
 
-@media (max-width: 900px) {
-    header {
-        height: 240px;
-        min-height: 120px;
-        /* שמירת התמונה ברקע */
-        background-image: url(https://cdn.glitch.global/9d6cc108-a698-4ad6-9591-d17c03047774/librarian.jpg?v=1721631637207) !important;
-        background-size: cover !important;
-        background-position: center center !important;
-    }
-    .main-title {
-        font-size: 1.17em;
-        padding: 10px 5vw 10px 5vw;
-    }
-}
 
-@media (max-width: 600px) {
-    header {
-        height: 210px !important;
-        min-height: 110px !important;
-        /* חיזוק התמונה ברקע עבור מובייל */
-        background-image: url(https://cdn.glitch.global/9d6cc108-a698-4ad6-9591-d17c03047774/librarian.jpg?v=1721631637207) !important;
-        background-size: cover !important;
-        background-position: center center !important;
-        background-repeat: no-repeat !important;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
-    }
-    .main-title {
-        font-size: 0.96em;
-        padding: 7px 3vw;
-        max-width: 97vw;
-        top: 54%;
-        left: 50%;
-    }
-}
 
 main {
     margin: 0 auto;

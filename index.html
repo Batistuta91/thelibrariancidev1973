@@ -1182,6 +1182,86 @@ function searchBooks() {
     let results = document.getElementById('searchResults');
     let listSection = document.getElementById('bookListSection');
     let borrowedSection = document.getElementById('borrowedBooksSection');
+
+    // מילים מיוחדות לחיפוש פנימי
+    if (val === "חסר תמונה") {
+        let noImg = books.filter(b => !(b.imageUrl || bookImages[b.id]));
+        if (!noImg.length) {
+            results.innerHTML = "<div style='color:#a00'>כל הספרים כוללים תמונה</div>";
+        } else {
+            results.innerHTML = `<div style="font-weight:bold;color:#b36d0c;">ספרים ללא תמונה:</div>` +
+                noImg.map(book => `
+                    <div class="book-item">
+                        <div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;">אין תמונה</div>
+                        <div class="book-info">
+                            <div class="book-title-author">
+                                <div class="book-title">${book.title || "ללא כותרת"}</div>
+                                <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+                            </div>
+                            ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+                            ${book.location ? `<div class="book-location" style="color:#1976d2;">📍 מיקום: ${book.location}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+        }
+        listSection.style.display = "none";
+        borrowedSection.style.display = "none";
+        return;
+    }
+    if (val === "חסר תקציר") {
+        let noSummary = books.filter(b => !b.summary || !b.summary.trim());
+        if (!noSummary.length) {
+            results.innerHTML = "<div style='color:#a00'>כל הספרים כוללים תקציר</div>";
+        } else {
+            results.innerHTML = `<div style="font-weight:bold;color:#1976d2;">ספרים ללא תקציר:</div>` +
+                noSummary.map(book => `
+                    <div class="book-item">
+                        ${book.imageUrl || bookImages[book.id] ? 
+                            `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" alt="עטיפת הספר">` : 
+                            `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;">אין תמונה</div>`
+                        }
+                        <div class="book-info">
+                            <div class="book-title-author">
+                                <div class="book-title">${book.title || "ללא כותרת"}</div>
+                                <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+                            </div>
+                            ${book.location ? `<div class="book-location" style="color:#1976d2;">📍 מיקום: ${book.location}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+        }
+        listSection.style.display = "none";
+        borrowedSection.style.display = "none";
+        return;
+    }
+    if (val === "חסר מיקום") {
+        let noLocation = books.filter(b => !b.location || !b.location.trim());
+        if (!noLocation.length) {
+            results.innerHTML = "<div style='color:#a00'>כל הספרים כוללים מיקום</div>";
+        } else {
+            results.innerHTML = `<div style="font-weight:bold;color:#43a047;">ספרים ללא מיקום:</div>` +
+                noLocation.map(book => `
+                    <div class="book-item">
+                        ${book.imageUrl || bookImages[book.id] ? 
+                            `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" alt="עטיפת הספר">` : 
+                            `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;">אין תמונה</div>`
+                        }
+                        <div class="book-info">
+                            <div class="book-title-author">
+                                <div class="book-title">${book.title || "ללא כותרת"}</div>
+                                <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+                            </div>
+                            ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+        }
+        listSection.style.display = "none";
+        borrowedSection.style.display = "none";
+        return;
+    }
+
+    // חיפוש רגיל
     if (!val) {
         results.innerHTML = "";
         listSection.style.display = "";
@@ -1302,6 +1382,7 @@ function searchBooks() {
     }
     results.innerHTML = html;
 }
+
 
 /* --------- ייצוא אקסל --------- */
 function exportBooks() {

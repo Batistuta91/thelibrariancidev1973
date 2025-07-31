@@ -1213,46 +1213,54 @@ function searchBooks() {
         html += `<div style="font-weight:bold;color:#175;">ספרים זמינים:</div>`;
         html += foundBooks.map(book => `
         <div class="book-item">
-            <div class="book-info-row">
-                ${book.imageUrl || bookImages[book.id] ? 
-                  `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" 
-                        alt="עטיפת הספר" 
-                        onclick="openImageModal('${book.imageUrl || bookImages[book.id]}')"
-                        onerror="this.style.display='none'">` : 
-                  `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;cursor:default;">אין תמונה</div>`
-                }
-                <div class="book-title-author">
-                    <div class="book-title">${book.title || "ללא כותרת"}</div>
-                    <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
-                </div>
-            </div>
-            ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
-            ${book.location ? `<div class="book-location" style="color:#1976d2;font-size:1em;margin:4px 0;font-weight:500;">📍 מיקום: ${book.location}</div>` : ''}
-            <div id="addImageBox${book.id}" class="book-actions" style="margin-bottom:3px;">
-                <button class="add-image-btn" onclick="startAddImage(${book.id})">הוסף תמונה</button>
-            </div>
-            <div id="locationBox${book.id}" class="book-actions" style="margin-bottom:3px;">
-                <button class="button" onclick="startEditLocation(${book.id})">
-                    ${book.location ? "ערוך מיקום" : "הוסף מיקום"}
-                </button>
-            </div>
-            <div id="borrowBox${book.id}" class="book-actions" style="margin-bottom:3px;">
-                <button class="button" style="padding:5px 16px;" onclick="startBorrow(${book.id})">השאל</button>
-            </div>
-            <div id="commentBox${book.id}" class="book-actions" style="margin-bottom:3px;">
-                <button class="button" style="padding:5px 16px;" onclick="startComment(${book.id})">הוסף תגובה</button>
-            </div>
-            <div class="book-actions">
-                <button class="button" style="background:#c62828" onclick="removeBook(${book.id})">מחק</button>
-            </div>
-            <div style="margin-top:7px;font-size:0.95em;color:#007">
-                ${comments[book.id] ? comments[book.id].map((c, index) => `
-                    <div style="margin-bottom:5px;">
-                        <button class="delete-comment-btn" onclick="deleteComment(${book.id}, ${index})" title="מחק תגובה">×</button>
-                        💬 <b>${c.user}</b>: ${c.text} 
-                        <span style="color:#aaa;font-size:0.92em;">(${c.date||''})</span>
-                    </div>
-                `).join('') : ''}
+            ${book.imageUrl || bookImages[book.id] ? 
+              `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" 
+                    alt="עטיפת הספר" 
+                    onclick="openImageModal('${book.imageUrl || bookImages[book.id]}')"
+                    onerror="this.style.display='none'"
+                    loading="lazy">` : 
+              `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;cursor:default;">אין תמונה</div>`
+            }
+            <div class="book-info">
+              <div class="book-title-author">
+                  <div class="book-title">${book.title || "ללא כותרת"}</div>
+                  <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+              </div>
+              ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+              ${book.location ? `<div class="book-location" style="color:#1976d2;font-size:1em;margin:4px 0;font-weight:500;">📍 מיקום: ${book.location}</div>` : ''}
+              <div class="book-actions">
+                  <div id="addImageBox${book.id}" style="margin-bottom:6px;">
+                      <button class="add-image-btn" onclick="startAddImage(${book.id})">הוסף תמונה</button>
+                  </div>
+                  <div id="summaryBox${book.id}" style="margin-bottom:6px;">
+                      <button class="button" onclick="startEditSummary(${book.id})">
+                          ${book.summary ? "ערוך תקציר" : "הוסף תקציר"}
+                      </button>
+                  </div>
+                  <div id="locationBox${book.id}" style="margin-bottom:6px;">
+                      <button class="button" onclick="startEditLocation(${book.id})">
+                          ${book.location ? "ערוך מיקום" : "הוסף מיקום"}
+                      </button>
+                  </div>
+                  <div id="borrowBox${book.id}" style="margin-bottom:6px;">
+                      <button class="button" style="padding:5px 16px;" onclick="startBorrow(${book.id})">השאל</button>
+                  </div>
+                  <div id="commentBox${book.id}" style="margin-bottom:6px;">
+                      <button class="button" style="padding:5px 16px;" onclick="startComment(${book.id})">הוסף תגובה</button>
+                  </div>
+                  <div>
+                      <button class="button" style="background:#c62828" onclick="removeBook(${book.id})">מחק</button>
+                  </div>
+              </div>
+              <div style="margin-top:7px;font-size:0.95em;color:#007">
+                  ${comments[book.id] ? comments[book.id].map((c, index) => `
+                      <div style="margin-bottom:5px;">
+                          <button class="button button-small" onclick="deleteComment(${book.id}, ${index})" title="מחק תגובה">×</button>
+                          💬 <b>${c.user}</b>: ${c.text} 
+                          <span style="color:#aaa;font-size:0.92em;">(${c.date||''})</span>
+                      </div>
+                  `).join('') : ''}
+              </div>
             </div>
         </div>
         `).join('');

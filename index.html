@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="he">
 <head>
@@ -730,6 +731,7 @@ body.accessibility-contrast .tab-btn {
         <input type="text" id="bookAuthor" placeholder="שם המחבר">
         <textarea id="bookSummary" placeholder="תקציר הספר"></textarea>
         <input type="text" id="bookImageUrl" placeholder="קישור לתמונה (לא חובה)">
+        <input type="text" id="bookLocation" placeholder="מיקום הספר (מדף, אזור, קוד)">
         <button class="button" onclick="addBook()">הוסף ספר</button>
     </div>
     <div id="importTab" class="tab-content">
@@ -744,7 +746,6 @@ body.accessibility-contrast .tab-btn {
         <button class="button" onclick="exportBooks()">ייצא</button>
     </div>
     <!-- תמיד פתוח – חיפוש ספרים -->
-    <!-- ... כל ההתחלה נשארת ... -->
     <div class="main-section" id="searchSection">
         <h2>חיפוש ספרים 🔍</h2>
         <div style="display:flex;gap:8px;">
@@ -764,50 +765,29 @@ body.accessibility-contrast .tab-btn {
         <div id="borrowedContainer"></div>
     </div>
     <div id="messageBox"></div>
-<div id="imageModal" class="image-modal">
-    <span class="close-modal" onclick="closeImageModal()">&times;</span>
-    <img class="modal-content" id="modalImage">
-</div>
-<!-- כפתור פתיחת תפריט נגישות -->
-<button class="accessibility-btn" title="תפריט נגישות" onclick="toggleAccessibilityMenu()">
-    <span aria-hidden="true">⚙️</span>
-</button>
+    <div id="imageModal" class="image-modal">
+        <span class="close-modal" onclick="closeImageModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    <!-- כפתור פתיחת תפריט נגישות -->
+    <button class="accessibility-btn" title="תפריט נגישות" onclick="toggleAccessibilityMenu()">
+        <span aria-hidden="true">⚙️</span>
+    </button>
 
-<!-- תפריט הנגישות עצמו -->
-<div class="accessibility-menu" id="accessibilityMenu">
-    <button onclick="setFontSize(+1)">הגדל פונט</button>
-    <button onclick="setFontSize(-1)">הקטן פונט</button>
-    <button onclick="resetFontSize()">גודל רגיל</button>
-    <button onclick="toggleContrast()">ניגודיות גבוהה</button>
-    <button onclick="toggleDarkModeAcc()">מצב לילה/כהה</button>
-</div>
-
+    <!-- תפריט הנגישות עצמו -->
+    <div class="accessibility-menu" id="accessibilityMenu">
+        <button onclick="setFontSize(+1)">הגדל פונט</button>
+        <button onclick="setFontSize(-1)">הקטן פונט</button>
+        <button onclick="resetFontSize()">גודל רגיל</button>
+        <button onclick="toggleContrast()">ניגודיות גבוהה</button>
+        <button onclick="toggleDarkModeAcc()">מצב לילה/כהה</button>
+    </div>
 </main>
 <script>
-
-function openTab(tabId, btn) {
-    // בדוק אם הלשונית כבר פתוחה
-    var el = document.getElementById(tabId);
-    var isOpen = el && el.classList.contains('open');
-
-    // סגור את כל הלשוניות וכפתורים
-    document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('open'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-    // אם היתה פתוחה - סגור והחזר (כלומר לא פותח שוב)
-    if (isOpen) return;
-
-    // אחרת פתח אותה והפעל כפתור
-    if (el) el.classList.add('open');
-    if (btn) btn.classList.add('active');
-}
-
-
 /* --------- CONFIG --------- */
 const BOOKS_API = "https://api.myjson.online/v1/records/a2a767ca-92e1-49fc-8e8a-23b04b541284";
 const BOOK_IMAGES_API = "https://api.myjson.online/v1/records/1f5626cb-34b4-4b8f-948a-57d2695f3171";
 const API_TOKEN = "a5a589e6-be1e-483e-8110-edd57cf4745f";
-
 const CODE = "0548330010"; // קוד אבטחה
 
 /* --------- STATE --------- */
@@ -829,6 +809,7 @@ function clearBookInputs() {
     document.getElementById('bookAuthor').value = '';
     document.getElementById('bookSummary').value = '';
     document.getElementById('bookImageUrl').value = '';
+    document.getElementById('bookLocation').value = '';
 }
 /* --------- פונקציות להוספת תמונה ברמת הספר --------- */
 function startAddImage(id) {
@@ -842,21 +823,11 @@ function startAddImage(id) {
 async function addImageToBook(id) {
     const imageUrl = document.getElementById('imageUrl'+id).value.trim();
     if (!imageUrl) return showMessage("נא להוסיף קישור לתמונה", false);
-    
-    // הוסף את התמונה ל-bookImages
     bookImages[id] = imageUrl;
-    
-    // עדכן גם את הספר עצמו אם הוא קיים
     const book = books.find(b => b.id == id);
-    if (book) {
-        book.imageUrl = imageUrl;
-    }
-    
+    if (book) { book.imageUrl = imageUrl; }
     const borrowedBook = borrowed.find(b => b.id == id);
-    if (borrowedBook) {
-        borrowedBook.imageUrl = imageUrl;
-    }
-    
+    if (borrowedBook) { borrowedBook.imageUrl = imageUrl; }
     await saveBooks();
     await fetchBooks();
     showMessage("תמונה נוספה בהצלחה!");
@@ -866,16 +837,9 @@ function cancelAddImage(id) {
     document.getElementById('addImageBox'+id).innerHTML = `
         <button class="add-image-btn" onclick="startAddImage(${id})">הוסף תמונה</button>
     `;
-    // עדכן תצוגה אם אנחנו בחיפוש
     const searchInput = document.getElementById('searchInput');
-    if (searchInput.value.trim()) {
-        searchBooks();
-    } else {
-        renderBooks();
-    }
+    if (searchInput.value.trim()) { searchBooks(); } else { renderBooks(); }
 }
-
-
 
 /* --------- פונקציות להצגת תמונה במודל --------- */
 function openImageModal(imageUrl) {
@@ -884,40 +848,22 @@ function openImageModal(imageUrl) {
     modal.style.display = "block";
     modalImg.src = imageUrl;
 }
-
-function closeImageModal() {
-    document.getElementById('imageModal').style.display = "none";
-}
-
-// סגור מודל בלחיצה על הרקע
+function closeImageModal() { document.getElementById('imageModal').style.display = "none"; }
 window.onclick = function(event) {
     const modal = document.getElementById('imageModal');
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
+    if (event.target == modal) { modal.style.display = "none"; }
 }
+
 /* --------- FETCH BOOKS --------- */
-
-
-
 async function fetchBooks() {
     try {
-        // שלב 1: טען את כל הספרים מה־API הראשי
         const res = await fetch(BOOKS_API, {
-            headers: {
-                'Content-Type': 'application/json',
-                'x-collection-access-token': API_TOKEN
-            }
+            headers: { 'Content-Type': 'application/json', 'x-collection-access-token': API_TOKEN }
         });
         const json = await res.json();
         let data;
-        if (json.jsonData) {
-            try { data = JSON.parse(json.jsonData); } catch(e) { data = json.jsonData; }
-        } else {
-            data = json.data || {};
-        }
-        console.log("ספרים מה-API:", data);
-
+        if (json.jsonData) { try { data = JSON.parse(json.jsonData); } catch(e) { data = json.jsonData; } }
+        else { data = json.data || {}; }
         if (Array.isArray(data)) {
             books = data;
             borrowed = [];
@@ -927,59 +873,23 @@ async function fetchBooks() {
             borrowed = data.borrowed || [];
             comments = data.comments || {};
         }
-
-        // שלב 2: טען את התמונות מה־API הנפרד
         let imagesRes = await fetch(BOOK_IMAGES_API, {
-            headers: {
-                'Content-Type': 'application/json',
-                'x-collection-access-token': API_TOKEN
-            }
+            headers: { 'Content-Type': 'application/json', 'x-collection-access-token': API_TOKEN }
         });
         let imagesJson = await imagesRes.json();
-        console.log("תשובת API של תמונות:", imagesJson);
-
         let imagesData;
-        if (imagesJson.jsonData) {
-            try { imagesData = JSON.parse(imagesJson.jsonData); } catch(e) { imagesData = imagesJson.jsonData; }
-        } else {
-            imagesData = imagesJson.data || {};
-        }
-        console.log("imagesData אחרי פענוח:", imagesData);
-
-        // מבנה bookImages – או אובייקט של bookId=>URL, או מערך
+        if (imagesJson.jsonData) { try { imagesData = JSON.parse(imagesJson.jsonData); } catch(e) { imagesData = imagesJson.jsonData; } }
+        else { imagesData = imagesJson.data || {}; }
         if (Array.isArray(imagesData)) {
-            bookImages = {}; // איפוס
-            imagesData.forEach(item => {
-                if (item.id && item.url) bookImages[item.id] = item.url;
-            });
-        } else {
-            bookImages = imagesData || {};
-        }
-        console.log("bookImages הסופי:", bookImages);
-
-        // שלב 3: שייך לכל ספר תמונה לפי bookImages
-        books.forEach(book => {
-            const bookIdStr = String(book.id);
-            if (bookImages[bookIdStr]) {
-                book.imageUrl = bookImages[bookIdStr];
-            }
-        });
-        borrowed.forEach(book => {
-            const bookIdStr = String(book.id);
-            if (bookImages[bookIdStr]) {
-                book.imageUrl = bookImages[bookIdStr];
-            }
-        });
-
-        console.log("books כולל imageUrl:", books.map(b => ({id: b.id, title: b.title, imageUrl: b.imageUrl})));
-        console.log("borrowed כולל imageUrl:", borrowed.map(b => ({id: b.id, title: b.title, imageUrl: b.imageUrl})));
-
+            bookImages = {};
+            imagesData.forEach(item => { if (item.id && item.url) bookImages[item.id] = item.url; });
+        } else { bookImages = imagesData || {}; }
+        books.forEach(book => { const bookIdStr = String(book.id); if (bookImages[bookIdStr]) { book.imageUrl = bookImages[bookIdStr]; } });
+        borrowed.forEach(book => { const bookIdStr = String(book.id); if (bookImages[bookIdStr]) { book.imageUrl = bookImages[bookIdStr]; } });
         renderBooks();
         renderBorrowed();
         searchBooks();
-
     } catch (e) {
-        console.error("שגיאה ב-fetchBooks:", e);
         books = [];
         borrowed = [];
         comments = {};
@@ -990,62 +900,54 @@ async function fetchBooks() {
 }
 
 async function saveBooks() {
-    const data = {
-        books,
-        borrowed,
-        comments
-    };
-    
+    const data = { books, borrowed, comments };
     try {
-        // שמור את הספרים
         await fetch(BOOKS_API, {
             method: "PUT",
-            headers: {
-                'Content-Type': 'application/json',
-                'x-collection-access-token': API_TOKEN
-            },
+            headers: { 'Content-Type': 'application/json', 'x-collection-access-token': API_TOKEN },
             body: JSON.stringify({ jsonData: JSON.stringify(data) })
         });
-
-        // שמור את התמונות בנפרד
         await fetch(BOOK_IMAGES_API, {
             method: "PUT",
-            headers: {
-                'Content-Type': 'application/json',
-                'x-collection-access-token': API_TOKEN
-            },
+            headers: { 'Content-Type': 'application/json', 'x-collection-access-token': API_TOKEN },
             body: JSON.stringify({ jsonData: JSON.stringify(bookImages) })
         });
-        
-    } catch (e) {
-        console.error("שגיאה בשמירה:", e);
+    } catch (e) {}
+}
+
+/* --------- ACTIONS --------- */
+// ניהול פתיחת לשוניות בטאבים
+function openTab(tabId, btn) {
+    // בדוק אם כבר פתוח
+    const tab = document.getElementById(tabId);
+    const isOpen = tab.classList.contains('open');
+    // סגור הכל
+    document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('open'));
+    document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+    // אם כבר פתוח, אל תפתח שוב (וככה בעצם תסגור)
+    if (!isOpen) {
+        tab.classList.add('open');
+        btn.classList.add('active');
     }
 }
-/* --------- ACTIONS --------- */
+
 async function addBook() {
     const title = document.getElementById('bookTitle').value.trim();
     const author = document.getElementById('bookAuthor').value.trim();
     const summary = document.getElementById('bookSummary').value.trim();
     const imageUrl = document.getElementById('bookImageUrl').value.trim();
+    const location = document.getElementById('bookLocation').value.trim();
 
-    // בקשת קוד אימות
     const code = prompt("נא להזין קוד לצורך הוספת ספר:");
-    if (code !== CODE) {
-        showMessage("קוד לא נכון. הספר לא נוסף.", false);
-        return;
-    }
-
+    if (code !== CODE) { showMessage("קוד לא נכון. הספר לא נוסף.", false); return; }
     if (!title) return showMessage("נא למלא כותרת", false);
 
     const id = Date.now();
-    const newBook = { id, title, author, summary };
-
-    // אם יש תמונה, הוסף אותה לספר
+    const newBook = { id, title, author, summary, location };
     if (imageUrl) {
         newBook.imageUrl = imageUrl;
         bookImages[id] = imageUrl;
     }
-
     books.push(newBook);
     await saveBooks();
     await fetchBooks();
@@ -1053,6 +955,27 @@ async function addBook() {
     showMessage("הספר נוסף בהצלחה!");
 }
 
+/* --------- עריכת מיקום --------- */
+function startEditLocation(id) {
+    const book = books.find(b => b.id == id);
+    const location = (book && book.location) || '';
+    document.getElementById('locationBox'+id).innerHTML = `
+        <input type="text" id="locationInput${id}" style="width:180px;display:inline-block;" placeholder="מיקום הספר" value="${location}">
+        <button class="button" style="padding:5px 12px;" onclick="saveLocation(${id})">שמור</button>
+        <button class="button" style="padding:5px 12px;background:#999;" onclick="cancelEditLocation(${id})">ביטול</button>
+    `;
+}
+async function saveLocation(id) {
+    const location = document.getElementById('locationInput'+id).value.trim();
+    const book = books.find(b => b.id == id);
+    if (book) {
+        book.location = location;
+        await saveBooks();
+        await fetchBooks();
+        showMessage("המיקום עודכן בהצלחה!");
+    }
+}
+function cancelEditLocation(id) { renderBooks(); }
 
 /* --------- BORROW --------- */
 function startBorrow(id) {
@@ -1079,7 +1002,7 @@ async function returnBook(id) {
     const idx = borrowed.findIndex(b=>b.id==id);
     if(idx>-1) {
         let b = borrowed[idx];
-        books.push({id:b.id, title:b.title, author:b.author, summary:b.summary});
+        books.push({id:b.id, title:b.title, author:b.author, summary:b.summary, location:b.location});
         borrowed.splice(idx,1);
         await saveBooks();
         await fetchBooks();
@@ -1090,15 +1013,9 @@ async function returnBook(id) {
 /* --------- תגובה ברמת ספר --------- */
 async function deleteComment(bookId, commentIndex) {
     if (!comments[bookId] || !comments[bookId][commentIndex]) return;
-    
     if (confirm("האם אתה בטוח שברצונך למחוק את התגובה?")) {
         comments[bookId].splice(commentIndex, 1);
-        
-        // אם לא נשארו תגובות, מחק את המפתח
-        if (comments[bookId].length === 0) {
-            delete comments[bookId];
-        }
-        
+        if (comments[bookId].length === 0) { delete comments[bookId]; }
         await saveBooks();
         await fetchBooks();
         showMessage("התגובה נמחקה בהצלחה!");
@@ -1124,7 +1041,6 @@ async function addBookComment(id) {
 }
 
 /* --------- RENDER --------- */
-// מטמון תמונות לטעינה מהירה
 const imageCache = new Map();
 function preloadImage(src) {
     if (!imageCache.has(src)) {
@@ -1136,18 +1052,8 @@ function preloadImage(src) {
 
 function renderBooks() {
     const container = document.getElementById('booksContainer');
-    if (!books.length) { 
-        container.innerHTML = "<p style='color:#899;'>אין ספרים במאגר</p>"; 
-        return; 
-    }
-    
-    // טעינה מוקדמת של תמונות
-    books.forEach(book => {
-        if (book.imageUrl || bookImages[book.id]) {
-            preloadImage(book.imageUrl || bookImages[book.id]);
-        }
-    });
-    
+    if (!books.length) { container.innerHTML = "<p style='color:#899;'>אין ספרים במאגר</p>"; return; }
+    books.forEach(book => { if (book.imageUrl || bookImages[book.id]) { preloadImage(book.imageUrl || bookImages[book.id]); } });
     container.innerHTML = books.map(book => `
       <div class="book-item">
           ${book.imageUrl || bookImages[book.id] ? 
@@ -1164,6 +1070,7 @@ function renderBooks() {
                 <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
             </div>
             ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+            ${book.location ? `<div class="book-location" style="color:#1976d2;font-size:1em;margin:4px 0;font-weight:500;">📍 מיקום: ${book.location}</div>` : ''}
             <div class="book-actions">
                 <div id="addImageBox${book.id}" style="margin-bottom:6px;">
                     <button class="add-image-btn" onclick="startAddImage(${book.id})">הוסף תמונה</button>
@@ -1171,6 +1078,11 @@ function renderBooks() {
                 <div id="summaryBox${book.id}" style="margin-bottom:6px;">
                     <button class="button" onclick="startEditSummary(${book.id})">
                         ${book.summary ? "ערוך תקציר" : "הוסף תקציר"}
+                    </button>
+                </div>
+                <div id="locationBox${book.id}" style="margin-bottom:6px;">
+                    <button class="button" onclick="startEditLocation(${book.id})">
+                        ${book.location ? "ערוך מיקום" : "הוסף מיקום"}
                     </button>
                 </div>
                 <div id="borrowBox${book.id}" style="margin-bottom:6px;">
@@ -1198,38 +1110,27 @@ function renderBooks() {
 }
 
 async function removeBook(id) {
-    // שלב 1: קבלת קוד מהמשתמש
     const code = prompt("אנא הזן את קוד האימות כדי למחוק את הספר:");
     if (code !== CODE) {
         showMessage("קוד לא נכון. הספר לא נמחק.", false);
         return;
     }
-    // שלב 2: אישור מחיקה
     if (confirm("האם אתה בטוח שברצונך למחוק את הספר?")) {
         const idx = books.findIndex(b => b.id == id);
         if (idx > -1) {
             books.splice(idx, 1);
-            // מחק גם את התגובות של הספר
             delete comments[id];
-            // מחק גם את התמונה
             delete bookImages[id];
-            
             await saveBooks();
             await fetchBooks();
             showMessage("הספר נמחק בהצלחה!");
         }
     }
 }
-    
 
-/* --------- עדכון renderBorrowed עם לחיצה על תמונה --------- */
 function renderBorrowed() {
     const container = document.getElementById('borrowedContainer');
-    if (!borrowed.length) { 
-        container.innerHTML = "<p style='color:#899;'>אין ספרים מושאלים</p>"; 
-        return; 
-    }
-    
+    if (!borrowed.length) { container.innerHTML = "<p style='color:#899;'>אין ספרים מושאלים</p>"; return; }
     container.innerHTML = borrowed.map(book => `
         <div class="book-item" style="background:#f4fff4">
             <div class="book-info-row">
@@ -1246,6 +1147,7 @@ function renderBorrowed() {
                 </div>
             </div>
             ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+            ${book.location ? `<div class="book-location" style="color:#1976d2;font-size:1em;margin:4px 0;font-weight:500;">📍 מיקום: ${book.location}</div>` : ''}
             <div style="margin:3px 0 8px 0;font-size:1.04em;">
                 <span>📅 הושאל ל: <b>${book.borrower}</b> בתאריך ${book.date||''}</span>
             </div>
@@ -1262,32 +1164,24 @@ function renderBorrowed() {
         </div>
     `).join('');
 }
+
 /* --------- SEARCH --------- */
 function clearSearch() {
     document.getElementById('searchInput').value = "";
     searchBooks();
 }
-
-// חיפוש דינמי + כפתור
 function setupSearchListeners() {
     document.getElementById('searchInput').addEventListener('input', searchBooks);
     document.getElementById('searchBtn').addEventListener('click', searchBooks);
-    // Enter בלחיצה על אינפוט
     document.getElementById('searchInput').addEventListener('keydown', function(e){
         if(e.key==="Enter") searchBooks();
     });
 }
-
-// ב־searchBooks – שלוט בתצוגה:
-
 function searchBooks() {
-    // קלט החיפוש
     let val = document.getElementById('searchInput').value.trim().toLowerCase();
     let results = document.getElementById('searchResults');
     let listSection = document.getElementById('bookListSection');
     let borrowedSection = document.getElementById('borrowedBooksSection');
-
-    // אם אין חיפוש – להחזיר תצוגה רגילה
     if (!val) {
         results.innerHTML = "";
         listSection.style.display = "";
@@ -1296,78 +1190,73 @@ function searchBooks() {
         renderBorrowed();
         return;
     }
-
-    // הסתרת הרשימות בעת חיפוש
     listSection.style.display = "none";
     borrowedSection.style.display = "none";
-
-    // חיפוש בטוח – תומך בשדות ריקים, לא תלויית רישיות
     let foundBooks = books.filter(b =>
         (typeof b.title === "string" && b.title.toLowerCase().includes(val)) ||
         (typeof b.author === "string" && b.author.toLowerCase().includes(val)) ||
-        (typeof b.summary === "string" && b.summary.toLowerCase().includes(val))
+        (typeof b.summary === "string" && b.summary.toLowerCase().includes(val)) ||
+        (typeof b.location === "string" && b.location.toLowerCase().includes(val))
     );
     let foundBorrowed = borrowed.filter(b =>
         (typeof b.title === "string" && b.title.toLowerCase().includes(val)) ||
         (typeof b.author === "string" && b.author.toLowerCase().includes(val)) ||
-        (typeof b.summary === "string" && b.summary.toLowerCase().includes(val))
+        (typeof b.summary === "string" && b.summary.toLowerCase().includes(val)) ||
+        (typeof b.location === "string" && b.location.toLowerCase().includes(val))
     );
-
-    // אין תוצאות
     if (!foundBooks.length && !foundBorrowed.length) {
         results.innerHTML = "<div style='color:#a00'>לא נמצאו ספרים מתאימים</div>";
         return;
     }
-
-    // בניית HTML של התוצאות
     let html = "";
-
-   if (foundBooks.length) {
-    html += `<div style="font-weight:bold;color:#175;">ספרים זמינים:</div>`;
-    html += foundBooks.map(book => `
-    <div class="book-item">
-        <div class="book-info-row">
-            ${book.imageUrl || bookImages[book.id] ? 
-              `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" 
-                    alt="עטיפת הספר" 
-                    onclick="openImageModal('${book.imageUrl || bookImages[book.id]}')"
-                    onerror="this.style.display='none'">` : 
-              `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;cursor:default;">אין תמונה</div>`
-            }
-            <div class="book-title-author">
-                <div class="book-title">${book.title || "ללא כותרת"}</div>
-                <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+    if (foundBooks.length) {
+        html += `<div style="font-weight:bold;color:#175;">ספרים זמינים:</div>`;
+        html += foundBooks.map(book => `
+        <div class="book-item">
+            <div class="book-info-row">
+                ${book.imageUrl || bookImages[book.id] ? 
+                  `<img class="book-img" src="${book.imageUrl || bookImages[book.id]}" 
+                        alt="עטיפת הספר" 
+                        onclick="openImageModal('${book.imageUrl || bookImages[book.id]}')"
+                        onerror="this.style.display='none'">` : 
+                  `<div class="book-img" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;cursor:default;">אין תמונה</div>`
+                }
+                <div class="book-title-author">
+                    <div class="book-title">${book.title || "ללא כותרת"}</div>
+                    <div class="book-author">מאת ${book.author || "לא ידוע"}</div>
+                </div>
+            </div>
+            ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+            ${book.location ? `<div class="book-location" style="color:#1976d2;font-size:1em;margin:4px 0;font-weight:500;">📍 מיקום: ${book.location}</div>` : ''}
+            <div id="addImageBox${book.id}" class="book-actions" style="margin-bottom:3px;">
+                <button class="add-image-btn" onclick="startAddImage(${book.id})">הוסף תמונה</button>
+            </div>
+            <div id="locationBox${book.id}" class="book-actions" style="margin-bottom:3px;">
+                <button class="button" onclick="startEditLocation(${book.id})">
+                    ${book.location ? "ערוך מיקום" : "הוסף מיקום"}
+                </button>
+            </div>
+            <div id="borrowBox${book.id}" class="book-actions" style="margin-bottom:3px;">
+                <button class="button" style="padding:5px 16px;" onclick="startBorrow(${book.id})">השאל</button>
+            </div>
+            <div id="commentBox${book.id}" class="book-actions" style="margin-bottom:3px;">
+                <button class="button" style="padding:5px 16px;" onclick="startComment(${book.id})">הוסף תגובה</button>
+            </div>
+            <div class="book-actions">
+                <button class="button" style="background:#c62828" onclick="removeBook(${book.id})">מחק</button>
+            </div>
+            <div style="margin-top:7px;font-size:0.95em;color:#007">
+                ${comments[book.id] ? comments[book.id].map((c, index) => `
+                    <div style="margin-bottom:5px;">
+                        <button class="delete-comment-btn" onclick="deleteComment(${book.id}, ${index})" title="מחק תגובה">×</button>
+                        💬 <b>${c.user}</b>: ${c.text} 
+                        <span style="color:#aaa;font-size:0.92em;">(${c.date||''})</span>
+                    </div>
+                `).join('') : ''}
             </div>
         </div>
-        ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
-        
-  <div id="addImageBox${book.id}" class="book-actions" style="margin-bottom:3px;">
-    <button class="add-image-btn" onclick="startAddImage(${book.id})">הוסף תמונה</button>
-</div>
-<div id="borrowBox${book.id}" class="book-actions" style="margin-bottom:3px;">
-    <button class="button" style="padding:5px 16px;" onclick="startBorrow(${book.id})">השאל</button>
-</div>
-<div id="commentBox${book.id}" class="book-actions" style="margin-bottom:3px;">
-    <button class="button" style="padding:5px 16px;" onclick="startComment(${book.id})">הוסף תגובה</button>
-</div>
-<div class="book-actions">
-    <button class="button" style="background:#c62828" onclick="removeBook(${book.id})">מחק</button>
-</div>
-
-        <div style="margin-top:7px;font-size:0.95em;color:#007">
-            ${comments[book.id] ? comments[book.id].map((c, index) => `
-                <div style="margin-bottom:5px;">
-                    <button class="delete-comment-btn" onclick="deleteComment(${book.id}, ${index})" title="מחק תגובה">×</button>
-                    💬 <b>${c.user}</b>: ${c.text} 
-                    <span style="color:#aaa;font-size:0.92em;">(${c.date||''})</span>
-                </div>
-            `).join('') : ''}
-        </div>
-    </div>
-    `).join('');
-}
-
-
+        `).join('');
+    }
     if (foundBorrowed.length) {
         html += `<div style="font-weight:bold;color:#856300;margin-top:16px;">ספרים מושאלים:</div>`;
         html += foundBorrowed.map(book => `
@@ -1386,6 +1275,7 @@ function searchBooks() {
                 </div>
             </div>
             ${book.summary ? `<div class="book-summary">${book.summary}</div>` : ''}
+            ${book.location ? `<div class="book-location" style="color:#1976d2;font-size:1em;margin:4px 0;font-weight:500;">📍 מיקום: ${book.location}</div>` : ''}
             <div style="margin:3px 0 8px 0;font-size:1.04em;">
                 <span>📅 הושאל ל: <b>${book.borrower}</b> בתאריך ${book.date||''}</span>
             </div>
@@ -1402,20 +1292,17 @@ function searchBooks() {
         </div>
         `).join('');
     }
-
     results.innerHTML = html;
 }
-
-
-
-  
-
 
 /* --------- ייצוא אקסל --------- */
 function exportBooks() {
     let code = document.getElementById('exportCode').value;
     if (code !== CODE) { showMessage("קוד לא נכון", false); return; }
-    let allBooks = [...books, ...borrowed.map(b=>({...b, borrower:b.borrower||"", borrowedDate:b.date||""}))];
+    let allBooks = [
+        ...books.map(b=>({...b, borrower:"", borrowedDate:""})),
+        ...borrowed.map(b=>({...b, borrower:b.borrower||"", borrowedDate:b.date||""}))
+    ];
     let ws = XLSX.utils.json_to_sheet(allBooks);
     let wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "ספרים");
@@ -1433,19 +1320,25 @@ function importBooks() {
         let workbook = XLSX.read(data, {type:'array'});
         let sheet = workbook.Sheets[workbook.SheetNames[0]];
         let arr = XLSX.utils.sheet_to_json(sheet);
-        // רק מבנה בסיסי: id, title, author, summary
         for(let r of arr) {
             if(!r.title) continue;
             let id = Date.now()+Math.floor(Math.random()*10000);
-            books.push({ id, title:r.title, author:r.author||'', summary:r.summary||'' });
+            books.push({
+                id,
+                title:r.title,
+                author:r.author||'',
+                summary:r.summary||'',
+                location:r.location||''
+            });
         }
         saveBooks().then(fetchBooks);
         showMessage("ספרים יובאו!");
     };
     reader.readAsArrayBuffer(file);
 }
+
+/* --------- תקציר --------- */
 function startEditSummary(id) {
-    // מציג תיבת קלט לעריכת תקציר
     const book = books.find(b => b.id == id);
     const summary = (book && book.summary) || '';
     document.getElementById('summaryBox'+id).innerHTML = `
@@ -1464,11 +1357,9 @@ async function saveSummary(id) {
         showMessage("התקציר עודכן בהצלחה!");
     }
 }
-function cancelEditSummary(id) {
-    renderBooks(); // מרנדר מחדש את כל הספרים, מחזיר למצב הקודם
-}
+function cancelEditSummary(id) { renderBooks(); }
 
-// מערכת נגישות פשוטה - שליטה בפונט וניגודיות/כהה
+/* --------- נגישות --------- */
 const ACCESS_FONT_KEY = 'library_font_size';
 const ACCESS_CONTRAST_KEY = 'library_contrast';
 const ACCESS_DARK_KEY = 'library_dark';
@@ -1476,7 +1367,6 @@ const ACCESS_DARK_KEY = 'library_dark';
 function toggleAccessibilityMenu() {
     document.getElementById('accessibilityMenu').classList.toggle('open');
 }
-
 function setFontSize(delta) {
     let fs = +localStorage.getItem(ACCESS_FONT_KEY) || 16;
     fs += delta;
@@ -1485,23 +1375,18 @@ function setFontSize(delta) {
     document.documentElement.style.fontSize = fs + "px";
     localStorage.setItem(ACCESS_FONT_KEY, fs);
 }
-
 function resetFontSize() {
     document.documentElement.style.fontSize = "16px";
     localStorage.setItem(ACCESS_FONT_KEY, 16);
 }
-
 function toggleContrast() {
     let enabled = document.body.classList.toggle('accessibility-contrast');
     localStorage.setItem(ACCESS_CONTRAST_KEY, enabled ? "1" : "");
 }
-
 function toggleDarkModeAcc() {
     let enabled = document.body.classList.toggle('accessibility-dark');
     localStorage.setItem(ACCESS_DARK_KEY, enabled ? "1" : "");
 }
-
-// טען הגדרות נגישות בשיגור
 (function(){
     let fs = +localStorage.getItem(ACCESS_FONT_KEY);
     if (fs && fs >= 13 && fs <= 28)
@@ -1511,8 +1396,6 @@ function toggleDarkModeAcc() {
     if (localStorage.getItem(ACCESS_DARK_KEY))
         document.body.classList.add('accessibility-dark');
 })();
-
-// סגור תפריט אם לוחצים בחוץ
 document.addEventListener('mousedown', function(e){
     const menu = document.getElementById('accessibilityMenu');
     const btn = document.querySelector('.accessibility-btn');
@@ -1520,18 +1403,13 @@ document.addEventListener('mousedown', function(e){
         menu.classList.remove('open');
     }
 });
-
-
-/* --------- INIT --------- */
 window.onload = async function() {
     await fetchBooks();
     setupSearchListeners();
-    // לוודא שתמיד יש מאזין לחיפוש
     document.getElementById('searchInput').addEventListener('input', searchBooks);
 };
-
-
-
 </script>
+
+
 </body>
 </html>
